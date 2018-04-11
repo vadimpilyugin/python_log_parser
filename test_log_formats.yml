@@ -1,0 +1,38 @@
+---
+ApacheFormat:
+  service: apache
+  regex: |
+    (?<user_ip>\S+) # may be ipv6
+    \s-\s-\s
+    \[
+      (?<__DAY__>\d+) \/ 
+      (?<__MONTH__>[a-zA-Z]+) \/ 
+      (?<__YEAR__>\d+) : 
+      (?<__HOUR__>\d+) : 
+      (?<__MINUTE__>\d+) : 
+      (?<__SECOND__>\d+) \s 
+      (?<__TIMEZONE__>\+\d+)
+    \]
+    \s
+    "
+      (?<method>\S+) \s 
+      (?<path>[^\s\?]+) (\?(?<params>\S+))? \s 
+      HTTP\/(?<http_version>\d\.\d)
+    "
+    \s
+    (?<code>\d+)
+    (.*)
+    \s-\s-\s
+    (?<__SERVER__>\S+)
+
+SyslogFormat:
+  regex: |
+    (?<__MONTH__>\S+)\s+      # Oct
+    (?<__DAY__>\d+)\s+        # 9
+    (?<__HOUR__>\d+):         # 06:
+    (?<__MINUTE__>\d+):       # 08:
+    (?<__SECOND__>\d+)\s+     # 05
+    (?<__SERVER__>\S+)\s+     # newserv
+    (?<__SERVICE__>[^\[:\ ]+) # systemd-logind - все до разделителя
+    (\[(?<pid>\d+)\])?        # [10405] - может идти, а может и не идти за именем сервиса
+    (:)?\s*(?<__MSG__>.*)     # : Accepted publickey for autocheck

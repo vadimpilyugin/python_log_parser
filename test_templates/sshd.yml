@@ -1,0 +1,17 @@
+---
+regex: 'sshd'
+service: 'sshd'
+templates:
+  Info:
+    New connection:
+    - 'Connection from (?<user_ip>\d+\.\d+\.\d+\.\d+) port (?<user_port>\S+) on (?<server_ip>\S+) port (?<server_port>\S+)'
+    Disconnect:
+    - 'Connection \S+ by (?<user_ip>\d+\.\d+\.\d+\.\d+)'
+    - 'Connection closed by authenticating user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+'
+    - 'Disconnected from (?<user_ip>\d+\.\d+\.\d+\.\d+):?'
+    - 'Disconnected from user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)'
+    - 'Received disconnect from  port \d+:\d+'
+    - 'Received disconnect from (?<user_ip>\d+\.\d+\.\d+\.\d+)'
+  Error:
+    Login fail:
+    - 'Failed password for invalid user (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)'

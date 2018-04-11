@@ -1,0 +1,9 @@
+---
+service: motion
+regex: 'motion'
+templates:
+  Info:
+    Motion detected:
+    - '(.*) Camera (?<camera_id>\d+) started: motion detection'
+    New video source:
+    - '(.*) event_new_video FPS (?<fps>\d+)'
