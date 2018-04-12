@@ -6,7 +6,7 @@ import excp
 import service as srv
 import loader as ld
 import parser as p
-
+import aggregation as agg
 
 class TestLogFormat(unittest.TestCase):
   def setUp(self):
@@ -255,6 +255,43 @@ class TestParser(unittest.TestCase):
       logline = self.bad_loglines[i]
       errno, reason, match_data = self.p.parse(logline)
       self.assertEqual(errno, self.errnos[i])
+
+class TestAggregation(unittest.TestCase):
+  def setUp(self):
+    self.agg = agg.Aggregation(
+      name="Aggregation 1",
+      keys=["key1", "key2"]
+    )
+    self.items = [
+      {"key1":"2", "key2":"foo"},
+      {"key1":"2", "key2":"foo", "key3":'baz'},
+      {"key1":"3", "key2":"bar"},
+      {"key1":"3", "key2":"bar"},
+      {"key1":"3", "key2":"baz"},
+      {"key1":"3", "key3":"baz"},
+      {"key4":"3", "key2":"baz"},
+    ]
+
+  def test_aggregation(self):
+    for i in self.items:
+      self.agg.insert(i)
+    self.assertEqual(
+      self.agg.get_distrib()[fields.ARRAY],
+      [
+        ['3', 
+          [
+            ['bar', 2], 
+            ['baz', 1]
+          ]
+        ], 
+        ['2', 
+          [
+            ['foo', 2]
+          ]
+        ]
+      ]
+    )
+    self.assertEqual(self.agg.get_distrib()[fields.WEIGHT], 5)
 
 
 if __name__ == '__main__':

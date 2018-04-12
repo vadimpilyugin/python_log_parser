@@ -1,0 +1,42 @@
+{
+  "/": {
+    "handler" : "root",
+    "methods" : ["GET"],
+    "params" : []
+  },
+  "/distribution": {
+    "handler" : "distrib",
+    "methods" : ["GET"],
+    "params" : ["id"]
+  },
+  "/counter": {
+    "handler" : "counter",
+    "methods" : ["GET"],
+    "params" : ["id"]
+  },
+  "/layout": {
+    "handler" : "layout",
+    "methods" : ["GET"],
+    "params" : []
+  },
+  "/layout/server": {
+    "handler" : "server",
+    "methods" : ["GET"],
+    "params" : ["server"]
+  },
+  "/distribution/failed/services": {
+    "handler" : "failed_services",
+    "methods" : ["GET"],
+    "params" : []
+  },
+  "/distribution/failed/templates": {
+    "handler" : "failed_templates",
+    "methods" : ["GET"],
+    "params" : []
+  },
+  "/distribution/failed/formats": {
+    "handler" : "failed_formats",
+    "methods" : ["GET"],
+    "params" : []
+  }
+}
