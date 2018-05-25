@@ -54,8 +54,8 @@ def retcode(ok, reason, descr, data={}):
     })
 
 def print_request(req):
-  print(f"--- New request: {req.method} {req.path}")
-  print(f"--- Params: {req.args.to_dict()}")
+  print("--- New request:", req.method, req.path)
+  print("--- Params:", req.args.to_dict())
 
 @app.before_request
 def before_ep():

@@ -14,7 +14,7 @@ def foo():
     args = value['params']
     if len(value['methods']) > 1:
       args.insert(0,'method')
-    print(f"def {value['handler']+'_ep'}({', '.join(args)}):")
+    print(f"def "+value['handler']+"_ep("+(', '.join(args))+"):")
     print("  return None\n")
   
 foo()
