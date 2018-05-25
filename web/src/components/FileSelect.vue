@@ -8,7 +8,7 @@
   </nav>
   <div class="central-col">
     <h5 class="card-title report-descr"> Выбор файлов </h5>
-    <p class="card-text report-descr"> Выберите файлы для разбора. Текущая папка ../../log_parser/logs/ </p>
+    <p class="card-text report-descr"> Выберите файлы для разбора. Текущая папка {{log_folder}} </p>
     <div>
       <button class="btn btn-primary" @click="parseFiles" v-if="!clicked"> Parse! </button>
       <button class="btn btn-success" @click="showReport" v-else> Show results! </button>
