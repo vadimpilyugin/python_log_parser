@@ -149,38 +149,38 @@
 </script>
 
 <style scoped>
-
-  li.is-clickable:hover {
-    background-color: #ececec;
-    cursor: pointer;
-  }
-  .breadcrumb {
-    margin-bottom: 0px;
-    border: none;
-    border-radius: 0px;
-    padding: 5px 20px;
-    background-color: #f7f7f7;
-  }
-  li:first-child {
-    border-radius: 0px;
-  }
-  div.card-body {
-    padding: 0;
-  }
-  a {
-    outline: 0;
-  }
-  a.danger {
-    color: white;
-  }
-  .list-group-item {
-    display: flex;
-    align-items: center;
-  }
-  .list-item-text {
-    width: 100%;
-  }
-  .badge {
-    font-size: 14px;
-  }
+li.is-clickable:hover {
+  background-color: #ececec;
+  cursor: pointer;
+}
+.breadcrumb {
+  margin-bottom: 0;
+  border: none;
+  border-radius: 0;
+  padding: 5px 20px;
+  background-color: #f7f7f7;
+}
+li:first-child {
+  border-radius: 0;
+  border-top: 0;
+}
+div.card-body {
+  padding: 0;
+}
+a {
+  outline: 0;
+}
+a.danger {
+  color: white;
+}
+.list-group-item {
+  display: flex;
+  align-items: flex-start;
+}
+.list-item-text {
+  width: 100%;
+}
+.badge {
+  font-size: 14px;
+}
 </style>

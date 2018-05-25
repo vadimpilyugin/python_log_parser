@@ -1,0 +1,8 @@
+---
+log_folder: '/var/log'
+report_file: 'default.conf/report.yml'
+
+
+templates: 'default.conf/templates/'
+log_formats: 'default.conf/log_formats.yml'
+api_file: 'default.conf/api.json'

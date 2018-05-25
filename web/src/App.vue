@@ -1,14 +1,6 @@
 <template>
   <div class="full-frame">
     <div class="main-content">
-      <error-popup
-        v-for="(error,i) in errors"
-        :key="i"
-        :level="error.level"
-        :preface="error.preface"
-        :message="error.message"
-
-      ></error-popup>
       <FileSelect 
         @success="report = true" 
         v-if="!report"
@@ -21,6 +13,17 @@
       >
 
       </MainPage>
+    </div>
+    <div class="error-content">
+      <error-popup
+        v-for="(error,i) in errors"
+        :key="i"
+        :level="error.level"
+        :preface="error.preface"
+        :message="error.message"
+
+      ></error-popup>
+      
     </div>
   </div>
 </template>
@@ -42,9 +45,17 @@ export default {
   justify-content: center;
 }
 .main-content {
-  max-width: 800px;
   width: 100%;
-  margin-bottom: 1rem;
+  padding: 1rem;
+  padding-top: 0;
+  max-width: 800px;
+}
+.error-content {
+  padding: 1rem;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 500px;
 }
 a {
   outline: 0;

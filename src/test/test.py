@@ -1,4 +1,6 @@
 import unittest
+import os,sys
+sys.path.insert(1, os.path.join(sys.path[0], '..')) 
 import log_formats as fmt
 import fields
 import re
@@ -29,7 +31,7 @@ class TestLogFormat(unittest.TestCase):
       regex=self.regex1, 
       service=self.service1
     )
-    log_formats = ld.load_log_formats(ld.content('test_log_formats.yml'))
+    log_formats = ld.load_log_formats(ld.content('src/test/test_log_formats.yml'))
     self.apache_format = log_formats.log_formats[0]
     self.apache_s = '141.8.142.23 - - [09/Oct/2016:06:35:46 +0300] "GET /robots.txt HTTP/1.0" 404 289 "-" "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)" - - old.parallel.ru'
 
@@ -221,8 +223,8 @@ class TestServiceSet(unittest.TestCase):
 
 class TestParser(unittest.TestCase):
   def setUp(self):
-    self.log_format_set = ld.load_log_formats(ld.content('test_log_formats.yml'))
-    self.service_set = ld.load_all_services('test_templates')
+    self.log_format_set = ld.load_log_formats(ld.content('src/test/test_log_formats.yml'))
+    self.service_set = ld.load_all_services('src/test/test_templates')
     self.p = p.Parser(self.log_format_set, self.service_set)
     self.loglines = [
       'May 18 11:16:29 93.180.9.161 motion: [1] [NTC] [EVT] event_new_video FPS 2',

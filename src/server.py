@@ -6,6 +6,7 @@ from flask import jsonify
 import flask
 import sys
 import traceback
+from config import config
 
 app = Flask(__name__)
 
@@ -28,7 +29,7 @@ ROOT = '/'
 def placeholder_ep():
   pass
 
-with open('api.json') as f:
+with open(config['api_file']) as f:
   content = json.loads(f.read())
 
 for ep, value in content.items():
@@ -61,10 +62,10 @@ def print_request(req):
 def before_ep():
   global STATIC_FILES
   if request.path in STATIC_FILES:
-    return flask.send_file('web'+request.path)
+    return flask.send_file('../web'+request.path)
   global ROOT
   if request.path == ROOT:
-    return flask.send_file('web'+STATIC_FILES[0])
+    return flask.send_file('../web'+STATIC_FILES[0])
   global content
   print_request(request)
   if request.path not in content:

@@ -20,7 +20,7 @@ export function makeId() {
   return text;
 }
 
-export function apiRequest (options, onOk, errors = undefined) {
+export function apiRequest (options, onOk, errors = undefined, onFail = undefined) {
   let ep = options.url;
   // options.url = 'http://localhost:5000' + options.url;
   axios(
@@ -31,12 +31,17 @@ export function apiRequest (options, onOk, errors = undefined) {
       onOk(response.data['__PAYLOAD__']);
     } else {
       console.log(`${ep} -- FAIL`);
-      if (errors)
+      if (errors) {
         errors.push({
           level : "danger",
           preface : `Endpoint ${ep}`,
           message : response.data['__DESCR__'] + " '" + response.data['__REASON__'] + "'"
         });
+      }
+      if (onFail !== undefined) {
+        console.log("Something silly");
+        onFail(response.data);
+      }
     }
   }).catch(error => {
     if (error.response) {

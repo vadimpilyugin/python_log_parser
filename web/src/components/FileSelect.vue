@@ -10,8 +10,8 @@
     <h5 class="card-title report-descr"> Выбор файлов </h5>
     <p class="card-text report-descr"> Выберите файлы для разбора. Текущая папка {{log_folder}} </p>
     <div>
-      <button class="btn btn-primary" @click="parseFiles" v-if="!clicked"> Parse! </button>
-      <button class="btn btn-success" @click="showReport" v-else> Show results! </button>
+      <button class="btn btn-primary report-descr" @click="parseFiles" v-if="!clicked"> Parse! </button>
+      <button class="btn btn-success report-descr" @click="showReport" v-else> Show results! </button>
     </div>
     <div class="card">
       <div class="card-header">
@@ -140,7 +140,9 @@ export default {
             }
             servers[i].files = files;
             servers[i].checked_no = files.length;
-          }, this.errors);
+          }, this.errors, (data) => {
+            console.log(data);
+          });
         }
         this.files = servers;
       }, this.errors);
@@ -186,8 +188,6 @@ export default {
 .central-col {
   display: flex;
   flex-direction: column;
-  max-width: 800px;
-  padding: 1rem 1rem;
 }
 ul {
   display: flex;
@@ -222,7 +222,13 @@ li {
   max-width: 300px;
   width: 100%;
 }
+.report-descr {
+  margin-left: 1rem;
+}
 button {
+  margin-bottom: 1rem;
+}
+.navbar {
   margin-bottom: 1rem;
 }
 </style>

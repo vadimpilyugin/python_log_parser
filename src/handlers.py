@@ -125,8 +125,8 @@ def parse_single_ep(server, filename):
         elif i[fields.ERRNO] == prs.NO_FORMAT:
           i.update({fields.LOGLINE:i[fields.REASON], fields.FILENAME:filename})
           err_format.insert(i)
-          print('Current weight:', err_format.get_distrib()[fields.WEIGHT])
-          pp.pprint(i)
+          # print('Current weight:', err_format.get_distrib()[fields.WEIGHT])
+          # pp.pprint(i)
       else:
         s['ok'] += 1
         if match_data[fields.SERVER] in aggs:

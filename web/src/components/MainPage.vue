@@ -5,15 +5,11 @@
           <img src="static/pie-chart.svg" width="30" height="30" alt="">
           Log Parser
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
+        <div>
+          <ul class="navbar-nav">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                {{mapName(layout[current_server].__NAME__)}}
+                <span>{{mapName(layout[current_server].__NAME__)}}</span>
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                 <a class="dropdown-item" href="#" @click.prevent="gotoPage(i)" v-for="(server_el, i) in layout" v-show="(currentServer != MAP_ALL_SERVERS_NAME) || (i != current_server)">{{mapName(server_el.__NAME__)}}</a>

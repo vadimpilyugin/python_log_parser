@@ -1,7 +1,10 @@
 <template>
   <transition name="fade">
     <div v-if="visible" :class="classes">
-        <p><strong>{{preface}}: </strong>{{message}}</p>
+      <strong>{{preface}}: </strong>{{message}}
+      <button type="button" class="close" @click.prevent="visible = false">
+        <span>&times;</span>
+      </button>
     </div>
   </transition>
 </template>
@@ -16,7 +19,7 @@
     },
     computed: {
       classes () {
-        return 'alert alert-'+this.level;
+        return 'alert alert-dismissible alert-'+this.level;
       }
     },
     created () {
@@ -31,14 +34,17 @@
 </script>
 
 <style scoped>
-  .alert {
+  /*.alert {
     display: flex;
     justify-content: space-between;
-  }
+  }*/
   .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
   }
   .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
     opacity: 0;
+  }
+  button {
+    outline: 0;
   }
 </style>
