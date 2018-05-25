@@ -1,0 +1,4 @@
+---
+regex: usbmount
+service: usbmount
+templates: 

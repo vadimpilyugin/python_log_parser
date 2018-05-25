@@ -131,7 +131,7 @@ class TestTemplate(unittest.TestCase):
 
   def test_parse(self):
     self.assertEqual(self.template.parse(self.s), {
-      fields.TEMPLATE_REGEX : self.regex_s,
+      # fields.TEMPLATE_REGEX : self.regex_s,
       fields.LEVEL : self.level,
       fields.TEMPLATE_CATEGORY : self.category,
       fields.TEMPLATE_ID : self.template_id,
@@ -237,17 +237,36 @@ class TestParser(unittest.TestCase):
       'Dec 11 07:37:56 newserv kernel[14495]: Connection from 42.7.26.60 port 2838 on 93.180.9.8 port 22',
       'Dec 11 07:38:16 newserv sshd[14495]: Disconnecting from user root 42.7.26.60',
     ]
+    self.messages = [
+      {fields.SERVICE: 'apache', fields.MESSAGE: '141.8.142.23 - - [09/Oct/2016:06:35:46 +0300] "GET /robots.txt HTTP/1.0" 404 289 "-" "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)" - - old.parallel.ru'},
+      {fields.SERVICE: 'sshd', fields.MESSAGE: 'Dec 11 07:38:16 newserv sshd[14495]: Disconnected from user root 42.7.26.60'}
+    ]
+    self.msg_match_data = [
+      {fields.SERVICE: 'apache', 'user_ip': '141.8.142.23','method': 'GET', 'path': '/robots.txt','params': None, 'http_version': '1.0', 'code': '404','__LEVEL__': 'Info','__CATEGORY__': 'New connection','__TEMPLID__': 23},
+      {fields.SERVICE: 'sshd','__CATEGORY__': 'Disconnect','__LEVEL__': 'Info','__SERVICE__': 'sshd','__TEMPLID__': 28,'user_ip': '42.7.26.60','username': 'root'}
+    ]
     self.errnos = [
       p.NO_FORMAT,
       p.NO_SERVICE,
       p.NO_TEMPLATE
     ]
-
+    
   def test_parse(self):
     for logline in self.loglines:
       errno, reason, match_data = self.p.parse(logline)
       self.assertIsNone(reason)
       self.assertIsNotNone(match_data)
+      self.assertEqual(errno, p.OK)
+
+  def test_parse_msg(self):
+    for i, line_hash in enumerate(self.messages):
+      errno, reason, match_data = self.p.parse_msg(line_hash)
+      self.assertIsNone(reason)
+      self.assertIsNotNone(match_data)
+      self.assertEqual(
+        match_data,
+        self.msg_match_data[i]
+      )
       self.assertEqual(errno, p.OK)
 
   def test_bad_parse(self):
@@ -258,9 +277,30 @@ class TestParser(unittest.TestCase):
 
 class TestAggregation(unittest.TestCase):
   def setUp(self):
-    self.agg = agg.Aggregation(
-      name="Aggregation 1",
-      keys=["key1", "key2"]
+    self.agg = agg.Aggregation({
+        fields.NAME: "Aggregation 1",
+        fields.KEYS: ["key1", "key2"]
+      }
+    )
+    self.agg2 = agg.Aggregation({
+        fields.NAME: "Aggregation 2",
+        fields.KEYS: ["key1", "key2"],
+        fields.SAVE_LINES: True
+      }
+    )
+    self.agg3 = agg.Aggregation({
+        fields.NAME: "Aggregation 3",
+        fields.KEYS: ["key1", "key2"],
+        fields.EXCLUDE: {
+          "key2":"baz"
+        }
+      }
+    )
+    self.agg4 = agg.Aggregation({
+        fields.NAME: "Aggregation 4",
+        fields.KEYS: ["key1", "key2"],
+        fields.SORT_ORDER: 'asc'
+      }
     )
     self.items = [
       {"key1":"2", "key2":"foo"},
@@ -271,28 +311,142 @@ class TestAggregation(unittest.TestCase):
       {"key1":"3", "key3":"baz"},
       {"key4":"3", "key2":"baz"},
     ]
-
-  def test_aggregation(self):
     for i in self.items:
       self.agg.insert(i)
+      self.agg2.insert(i)
+      self.agg3.insert(i)
+      self.agg4.insert(i)
+
+  def test_aggregation(self):
+    self.assertEqual(self.agg.get_distrib()[fields.WEIGHT], 5)
     self.assertEqual(
-      self.agg.get_distrib()[fields.ARRAY],
+      self.agg.get_distrib(),
+      {'__ARRAY__': [{'__ARRAY__': [{'__ARRAY__': [],
+                                     '__NAME__': 'bar',
+                                     '__WEIGHT__': 2},
+                                    {'__ARRAY__': [],
+                                     '__NAME__': 'baz',
+                                     '__WEIGHT__': 1}],
+                      '__NAME__': '3',
+                      '__WEIGHT__': 3},
+                     {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__NAME__': 'foo',
+                                     '__WEIGHT__': 2}],
+                      '__NAME__': '2',
+                      '__WEIGHT__': 2}],
+       '__NAME__': 'Aggregation 1',
+       '__WEIGHT__': 5}
+    )
+
+  def test_agg_sort_order(self):
+    self.assertEqual(
+      self.agg4.get_distrib(),
+      {'__ARRAY__': [
+                      {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__NAME__': 'foo',
+                                     '__WEIGHT__': 2}],
+                      '__NAME__': '2',
+                      '__WEIGHT__': 2},
+                      {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__NAME__': 'baz',
+                                     '__WEIGHT__': 1},
+                                     {'__ARRAY__': [],
+                                     '__NAME__': 'bar',
+                                     '__WEIGHT__': 2}],
+                      '__NAME__': '3',
+                      '__WEIGHT__': 3},
+
+                     ],
+       '__NAME__': 'Aggregation 4',
+       '__WEIGHT__': 5}
+    )
+
+  def test_agg_save_lines(self):
+    self.assertEqual(
+      self.agg2.distrib.distrib[fields.WEIGHT],
+      5
+    )
+    self.assertEqual(
+      self.agg2.distrib.distrib['2'][fields.LINES],
       [
-        ['3', 
-          [
-            ['bar', 2], 
-            ['baz', 1]
-          ]
-        ], 
-        ['2', 
-          [
-            ['foo', 2]
-          ]
-        ]
+        {"key1":"2", "key2":"foo"},
+        {"key1":"2", "key2":"foo", "key3":'baz'}
       ]
     )
-    self.assertEqual(self.agg.get_distrib()[fields.WEIGHT], 5)
+    self.assertEqual(
+      self.agg2.distrib.distrib['2']['foo'][fields.LINES],
+      [
+        {"key1":"2", "key2":"foo"},
+        {"key1":"2", "key2":"foo", "key3":'baz'}
+      ]
+    )
+    self.assertEqual(
+      self.agg2.distrib.distrib['3']['baz'][fields.LINES],
+      [
+        {"key1":"3", "key2":"baz"},
+      ]
+    )
 
+  def test_agg_exclude(self):
+    self.assertEqual(
+      self.agg3.get_distrib(),
+      {'__ARRAY__': [
+      {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__NAME__': 'foo',
+                                     '__WEIGHT__': 2}],
+                      '__NAME__': '2',
+                      '__WEIGHT__': 2},
+      {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__NAME__': 'bar',
+                                     '__WEIGHT__': 2}],
+                      '__NAME__': '3',
+                      '__WEIGHT__': 2},
+                     ],
+       '__NAME__': 'Aggregation 3',
+       '__WEIGHT__': 4}
+    )
+
+# class TestAggregationContainer(unittest.TestCase):
+#   def setUp(self):
+#     self.agg = agg.AggregationContainer(keys=('server','service'))
+#     for elem in [
+#       {'server':'server1','service':'service1'},
+#       {'server':'server1','service':'service2'},
+#       {'server':'server1','service':'service3'},
+#       {'server':'server1','service':'service4'},
+#       {'server':'server2','service':'service1'},
+#       {'server':'server2','service':'service2'},
+#       {'server':'server2','service':'service3'},
+#       {'server':'server2','service':'service4'},
+#       {'server':'server3','service':'service1'},
+#       {'server':'server3','service':'service2'},
+#       {'server':'server3','service':'service3'},
+#       {'server':'server3','service':'service4'},
+#     ]:
+#       self.agg.insert(elem)
+
+#   def test_keys(self):
+#     keys = []
+#     for k in self.agg.distrib:
+#       keys.append(k)
+#     self.assertEqual(
+#       keys, 
+#       [('server1', 'service1'),
+#        ('server1', 'service2'),
+#        ('server1', 'service3'),
+#        ('server1', 'service4'),
+#        ('server2', 'service1'),
+#        ('server2', 'service2'),
+#        ('server2', 'service3'),
+#        ('server2', 'service4'),
+#        ('server3', 'service1'),
+#        ('server3', 'service2'),
+#        ('server3', 'service3'),
+#        ('server3', 'service4')]
+#     )
+
+#   def test_saved_data(self):
+#     hsh = self.agg.distrib;
 
 if __name__ == '__main__':
   unittest.main()

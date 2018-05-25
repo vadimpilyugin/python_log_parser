@@ -4,6 +4,9 @@ import service as srv
 import os
 import re
 import excp
+import aggregation as agg
+from config import config
+import fields
 
 TEMPLATE_ID = 1
 
@@ -21,7 +24,8 @@ def load_log_formats(content):
       fmt.LogFormat(
         name=fmt_name,
         regex=re.compile(normalize(content[fmt_name]['regex']), re.X),
-        service=content[fmt_name]['service'] if 'service' in content[fmt_name] else None
+        service=content[fmt_name]['service'] if 'service' in content[fmt_name] else None,
+        date=content[fmt_name]['date'] if 'date' in content[fmt_name] else None 
       )
     )
   return fmt.LogFormatSet(log_formats)
@@ -39,6 +43,7 @@ def load_service(content):
     raise excp.LoaderException(content)
   if content['templates'] is None:
     content['templates'] = []
+  categories = {}
   for level, category, template in template_iterator(content['templates']):
     service_templates.append(
       srv.Template(
@@ -49,10 +54,12 @@ def load_service(content):
       )
     )
     TEMPLATE_ID += 1
+    categories[category] = True
   return srv.Service(
     regex=re.compile(normalize(content['regex'])),
     name=content['service'],
-    service_templates=srv.ServiceTemplates(service_templates)
+    service_templates=srv.ServiceTemplates(service_templates),
+    categories=categories
   )
 
 def load_all_services(dir):
@@ -60,3 +67,16 @@ def load_all_services(dir):
   for fn in filter(lambda x: re.match(r'.*\.yml', x), os.listdir(dir)):
     services.append(load_service(content(os.path.join(dir,fn))))
   return srv.ServiceSet(services)
+
+def load_aggregations():
+  with open(config["report_file"]) as f:
+    content = yaml.load(f)
+  for server_name in content:
+    for stat_type in content[server_name]:
+      ar = content[server_name][stat_type]
+      for i in range(0, len(ar)):
+        if stat_type == fields.COUNTERS:
+          ar[i] = agg.Counter(ar[i])
+        elif stat_type == fields.DISTRIBUTIONS:
+          ar[i] = agg.Aggregation(ar[i])
+  return content

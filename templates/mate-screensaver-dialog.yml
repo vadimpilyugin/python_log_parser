@@ -1,0 +1,4 @@
+---
+regex: mate\-screensaver\-dialog
+service: mate-screensaver-dialog
+templates: 

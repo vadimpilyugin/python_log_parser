@@ -1,0 +1,124 @@
+---
+regex: sshd
+service: sshd
+templates:
+  Info:
+    Disconnect:
+    - Received disconnect from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+    - Disconnected from (?<user_ip>\d+\.\d+\.\d+\.\d+):?
+    - Disconnected from user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+    - Connection closed by (?<user_ip>\d+\.\d+\.\d+\.\d+)
+    - Connection reset by (?<user_ip>\d+\.\d+\.\d+\.\d+)
+    - 'Close session: user (?<username>\S+)'
+    - Closing connection to \S+ port
+    - Connection closed by authenticating user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+
+    Starting shell session:
+    - 'Starting session: shell on pts/\d+ for (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+ id \d+'
+    New connection:
+    - Connection from (?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+ on (?<server_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+
+  Warning:
+    Nasty PTR record:
+    - Nasty PTR record "\S+" is set up for \S+, ignoring
+    Disconnect:
+    - Connection closed by invalid user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+
+  Debug:
+    Accepted:
+    - 'Accepted publickey for (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port (?<user_port>\S+) \S+: (?<protocol>\S+) (?<hashing_alg>\S+):(?<publickey>\S+)'
+    - Accepted (password|keyboard-interactive/pam) for (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port
+    Session activity:
+    - 'pam_unix\(sshd:session\): session (?<action>\S+) for user (?<username>\S+)'
+    - "^Starting session: command for \\\\S+"
+    Transfer:
+    - 'Transferred: sent (?<sent_bytes>\d+), received (?<received_bytes>\d+) bytes'
+    - 'Starting session: subsystem .sftp. for (?<username>\S+) from \S+ port'
+    - 'Starting session: command on \S+ for (?<username>\S+) from \S+ port'
+    Ignore:
+    - "^input_userauth_request"
+    - "^User child is on pid"
+    - "^Postponed keyboard-interactive"
+    - "^Starting session: shell on \\\\S+"
+    - Received SIGHUP; restarting.|Server listening
+    - "\\\\d+ > \\\\d+"
+    - reverse mapping checking getaddrinfo
+    - Deprecated option .*
+    - PAM service\(sshd\) ignoring max retries; \d+ > \d+
+    - 'Starting session: command for (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+ id \d+'
+  Error:
+    Invalid user:
+    - Invalid user (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+    Auth fail:
+    - Invalid user (?<username>\S*) from (?<user_ip>\d+\.\d+\.\d+\.\d+)( port (?<user_port>\d+))?
+    - Failed (\S+) for (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+) port (?<user_port>\S+)
+    - Failed (none|password) for invalid user (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port (?<user_port>\S+)( ssh2)?
+    - Failed none for invalid user (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+    - Address (?<user_ip>\d+\.\d+\.\d+\.\d+) maps to (?<user_address>\S+), but this
+      does not map back to the address - POSSIBLE BREAK-IN ATTEMPT!
+    - ROOT LOGIN REFUSED FROM (?<user_ip>\d+\.\d+\.\d+\.\d+)
+    - 'error: PAM: Authentication failure for (illegal user )?\S+ from '
+    - 'Failed keyboard-interactive/pam for invalid user (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port '
+    - 'pam_unix\(sshd:auth\): check pass; user unknown'
+    - 'pam_unix\(sshd:auth\): authentication failure;'
+    - 'ssh_dispatch_run_fatal: Connection from (?<user_ip>\d+\.\d+\.\d+\.\d+) port
+      \d+: message authentication code incorrect'
+    - PAM \d+ more authentication failur
+    - 'error: PAM: Authentication failure'
+    - Invalid user\s+(?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+
+    - Failed password for invalid user  (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+
+    - Failed password for invalid user\s+from (?<user_ip>\d+\.\d+\.\d+\.\d+) port
+      \d+
+    - Failed none for invalid user\s+from (?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+
+    Too many connections:
+    - maximum authentication attempts exceeded
+    - Too many authentication failures for (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port (?<user_port>\S+)
+    - 'Disconnecting: Too many authentication failures for invalid user (?<username>\S+)
+      from (?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+ ssh2'
+    - 'Disconnecting: Too many authentication failures \[preauth\]'
+    - 'Disconnecting authenticating user .*: Too many authentication failures'
+    Postponed publickey:
+    - Postponed publickey for (?<username>\S+) from (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port (?<user_port>\S+)
+    Broken pipe:
+    - "(fatal: )?ssh_dispatch_run_fatal: Connection from \\\\S+ port \\\\d+: Broken
+      pipe \\\\[preauth\\\\]"
+    Ignore:
+    - "^(fatal: )?Unable to negotiate with"
+    - "^Did not receive identification string"
+    - Bad protocol version identification
+    - 'userauth_pubkey: key type \S+ not in PubkeyAcceptedKeyTypes'
+    - 'fatal: no hostkey alg'
+    - "(fatal: )?no matching cipher found: client"
+    - 'Unable to negotiate with \S+ port \d+: no matching cipher found'
+    - 'Disconnecting: Packet corrupt'
+    - Bad packet length \d+
+    - 'drop connection #\d+ from .* past MaxStartups'
+    - 'Disconnecting invalid user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+: Change of username or service not allowed'
+    Disconnect:
+    - Connection closed by invalid user\s+(?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+
+    - 'Disconnecting invalid user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+: Too many authentication failures'
+    - Disconnected from invalid user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+ \[preauth\]
+    - Disconnected from authenticating user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+
+    - 'Disconnecting authenticating user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+: Change of username or service not allowed'
+    - 'Disconnecting invalid user\s+(?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+: Change
+      of username or service not allowed'
+    - 'Disconnecting invalid user  (?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+: Too many
+      authentication failures'
+    - Connection closed by invalid user  (?<user_ip>\d+\.\d+\.\d+\.\d+) port \d+ \[preauth\]
+    - Connection reset by authenticating user (?<username>\S+) (?<user_ip>\d+\.\d+\.\d+\.\d+)
+      port \d+ \[preauth\]

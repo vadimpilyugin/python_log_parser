@@ -1,0 +1,47 @@
+regex: 'dhcpd'
+service: 'dhcpd'
+templates:
+  Info:
+    Protocol:
+    - 'DHCPREQUEST for (?<ip_addr>\S+) (\(\S+\) )?from (?<mac_addr>\S+) (\(\S+\) )?via \S+'
+    - '(?<dhcp_method>DHCPACK|DHCPNAK) on (?<ip_addr>\S+) to (?<mac_addr>\S+) (\(\S+\) )?via \S+'
+    - '(?<dhcp_method>DHCPDISCOVER|DHCPOFFER|DHCPINFORM) from (?<mac_addr>\S+) (\(\S+\) )?via \S+'
+    - '(?<dhcp_method>DHCPDISCOVER|DHCPOFFER) on (?<ip_addr>\S+) to (?<mac_addr>\S+) (\(\S+\) )?via \S+'
+    - '(?<dhcp_method>DHCPACK) to (?<ip_addr>\S+) (?<mac_addr>\S+) (\(\S+\) )?via \S+'
+  Debug:
+    Write:
+    - Wrote \d+ deleted host decls to leases file
+    - Wrote \d+ new dynamic host decls to leases file
+    - Wrote \d+ leases to leases file
+    Networking:
+    - ICMP Echo reply while lease \S+ valid
+    - 'Abandoning IP address \S+: pinged before offer'
+    Legal info:
+    - '^Internet Systems Consortium DHCP Server \S+'
+    - '^Copyright \S+ Internet Systems Consortium.'
+    - '^All rights reserved.'
+    - '^For info, please visit https://www.isc.org/software/dhcp/'
+    Configuration:
+    - '^Config file: \S+'
+    - '^Database file: \S+'
+    - '^PID file: \S+'
+    - '^$'
+
+  Warning:
+    Ignoring requests on interface:
+    - 'Ignoring requests on (?<interface>\S+). If this is not what'
+    - '^you want, please write a subnet declaration'
+    - '^in your dhcpd.conf file for the network segment'
+    - '^to which interface \S+ is attached. \*\*'
+    - If you think you have received this message due to a bug rather
+    - than a configuration issue please read the section on submitting
+    - bugs on either our web page at www.isc.org or in the README file
+    - before submitting a bug. These pages explain the proper
+    - process and the information we find helpful for debugging..
+    - ^exiting.
+
+  Error:
+    No subnet declaration:
+    - '^No subnet declaration for '
+    Listening interfaces:
+    - Not configured to listen on any interfaces!

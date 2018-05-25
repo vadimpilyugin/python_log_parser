@@ -1,0 +1,10 @@
+---
+regex: rsyslogd
+service: rsyslogd
+templates:
+  Debug:
+    Ignore:
+    - "\\-\\- MARK \\-\\-"
+    - \[origin software="rsyslogd" swVersion=.*\] rsyslogd was HUPed
+    - action 'action \d+' resumed
+    - 'action ''action \d+'' suspended, next retry is '

@@ -1,0 +1,10 @@
+---
+regex: lxcfs
+service: lxcfs
+templates:
+  Debug:
+    Ignore:
+    - 'hierarchies:'
+    - "\\d+: fd:   \\d+: (\\S+)"
+    - "\\d+: fd:  \\d+: .*"
+    - 'lxcfs\.c: \d+: do_reload: lxcfs: reloaded'

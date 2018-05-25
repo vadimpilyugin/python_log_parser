@@ -1,0 +1,7 @@
+---
+regex: auditd
+service: auditd
+templates:
+  Debug:
+    Log rotation:
+    - Audit daemon rotating log files

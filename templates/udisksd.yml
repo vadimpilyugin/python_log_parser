@@ -1,0 +1,4 @@
+---
+regex: udisksd
+service: udisksd
+templates: 

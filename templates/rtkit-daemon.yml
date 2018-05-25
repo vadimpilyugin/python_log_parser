@@ -1,0 +1,4 @@
+---
+regex: rtkit\-daemon
+service: rtkit-daemon
+templates: 

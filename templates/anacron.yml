@@ -1,0 +1,18 @@
+---
+regex: anacron
+service: anacron
+templates:
+  Debug:
+    Job terminated:
+    - Job `(?<job_name>\S+)' terminated
+    Anacron started:
+    - Anacron \d+\.\d+ started on \d+\-\d+\-\d+
+    Normal exit:
+    - Normal exit \(\d+ job run\)
+    Ignore:
+    - Will run job `cron\.daily' in \d+ min\.
+    - Jobs will be executed sequentially
+    Job started:
+    - Job `(?<job_name>\S+)' started
+    Updated timestamp:
+    - Updated timestamp for job `(?<job_name>\S+)' to (?<timestamp>\S+)

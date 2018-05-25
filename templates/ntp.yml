@@ -1,0 +1,4 @@
+---
+regex: ntp
+service: ntp
+templates: 

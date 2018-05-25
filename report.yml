@@ -1,0 +1,49 @@
+---
+__ALL_SERVERS__:
+  __COUNTERS__:
+  - __NAME__: "Сообщений отфильтровано"
+    __SERVICE__: "dovecot"
+    __CATEGORY__: "Discard"
+  - __NAME__: "Записано видео"
+    __SERVICE__: "motion"
+    __CATEGORY__: "Motion"
+  - __NAME__: "Открыто сессий autocheck"
+    __SERVICE__: "sshd"
+    __CATEGORY__: "Session activity"
+    "action": "opened"
+    "username": "autocheck"
+  - __NAME__: "Ошибок аутентификации при подключении по ssh"
+    __SERVICE__: "sshd"
+    __CATEGORY__: "Auth fail"
+  __DISTRIBUTIONS__:
+  - __NAME__: "Ошибки в веб-сервере Apache"
+    __SERVICE__: "apache"
+    __KEYS__:
+    - "code"
+    - "path"
+    __EXCLUDE__:
+      "code": "200"
+  - __NAME__: "Редкие имена пользователей"
+    __KEYS__:
+    - "username"
+    __SORT_ORDER__: "asc"
+    __TOP__: 15
+  - __NAME__: "Какие сервера встретились в логах"
+    __KEYS__:
+    - __SERVER__
+    - __SERVICE__
+    __TOP__: 50
+"asi":
+  __DISTRIBUTIONS__:
+  - __NAME__: "Какие события были зарегестрированы на сервере"
+    __KEYS__:
+    - __SERVICE__
+    - __CATEGORY__
+    __TOP__: 50
+"vvv":
+  __DISTRIBUTIONS__:
+  - __NAME__: "Какие события были зарегестрированы на сервере"
+    __KEYS__:
+    - __SERVICE__
+    - __CATEGORY__
+    __TOP__: 50

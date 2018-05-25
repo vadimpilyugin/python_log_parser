@@ -1,0 +1,4 @@
+---
+regex: audispd
+service: audispd
+templates: 

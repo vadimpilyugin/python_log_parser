@@ -1,0 +1,4 @@
+---
+regex: org\.gtk\.vfs\.Daemon
+service: org.gtk.vfs.Daemon
+templates: 

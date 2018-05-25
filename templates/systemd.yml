@@ -1,0 +1,57 @@
+---
+regex: systemd
+service: systemd
+templates:
+  Debug:
+    Session activity:
+    - 'pam_unix\(systemd-user:session\): session (?<action>\S+) for user (?<username>\S+)'
+    - Started Session (\d+) of user (\S+)
+    Services:
+    - Reloading (?<servicename>)
+    - Reloaded (?<servicename>.*)
+    - 'Mounted Mount unit for '
+    Killed:
+    - Received (?<signal>\S+) from PID (?<killer_pid>\S+) \(kill\)
+    - 'user@\d+.service: Killing process \d+ \(kill\) with signal SIGKILL'
+    Restarting:
+    - ".*service: Service hold-off time over, scheduling restart."
+    - ".*service: Start request repeated too quickly."
+    - Control process exited, code=exited status=
+    Ignore:
+    - Reloading
+    - 'Mounting Mount unit for '
+    - Received SIGINT
+    - Unmounting .*\.\.\.
+    - Closed Load/Save RF Kill Switch Status /dev/rfkill Watch
+    - Listening on LXD - unix socket
+    - "(Started|Starting|Stopped|Stopping) (.*)( for UID (\\S+))?"
+    - "(\\S+) target (.*)\\."
+    - Removed slice User Slice of (\S+)
+    - "(?<action>\\S+) finished in (?<time_ms>\\d+)"
+    - "(Created|Removed) slice User Slice of (\\S+)"
+    - "(Created|Removed) slice user-(\\d+)\\.slice"
+    - "\\S+\\.target: Unit not needed anymore. Stopping."
+    - "\\S+.timer: Adding .* random time"
+    - Listening on GnuPG cryptographic
+    - Closed GnuPG
+    - Listening on GnuPG network certificate management daemon
+    - Time has been changed
+    - Failed to find module '.*'
+    - "/dev/.*: recovering journal"
+    - "/dev.*: clean, \\d+/\\d+ files, \\d+/\\d+ blocks"
+  Error:
+    Service failures:
+    - "(?<service>\\S+).service: Unit entered failed state."
+    - "(?<service>\\S+).service: Main process exited"
+    - "(?<service>\\S+).service: Failed with result "
+    - Failed to start (?<service>\S+)
+    - "(\\S+).service: Failed at step EXEC spawning .*: No such file or directory"
+    Network:
+    - 'Failed to send queued message: Transport endpoint is not connected'
+  Warning:
+    Service warning:
+    - "(?<service>\\S+).service: Got notification message from PID \\d+, but reception
+      is disabled"
+    Ignore:
+    - Cannot find unit for notify message of PID \d+
+    - Trying to run as user instance, but \$XDG_RUNTIME_DIR is not set

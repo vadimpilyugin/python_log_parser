@@ -1,0 +1,4 @@
+---
+regex: acpid
+service: acpid
+templates: 

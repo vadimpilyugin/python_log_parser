@@ -1,0 +1,4 @@
+---
+regex: mtp\-probe
+service: mtp-probe
+templates: 

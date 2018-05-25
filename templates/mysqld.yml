@@ -1,0 +1,9 @@
+---
+regex: mysqld(_safe)?
+service: mysqld
+templates:
+  Debug:
+    Ignore:
+    - 'InnoDB: page_cleaner: \d+ms intended loop took \d+ms\.'
+    - "\\d+ \\d+:\\d+:\\d+ mysqld_safe Logging to "
+    - "\\d+ \\d+:\\d+:\\d+ mysqld_safe Starting mysqld daemon with databases from"

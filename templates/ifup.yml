@@ -1,0 +1,4 @@
+---
+regex: ifup
+service: ifup
+templates: 

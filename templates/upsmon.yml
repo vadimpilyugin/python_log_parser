@@ -1,0 +1,21 @@
+---
+regex: upsmon
+service: upsmon
+templates:
+  Debug:
+    On battery:
+    - UPS \S+ on battery
+    On line power:
+    - UPS \S+ on line power
+    Power back:
+    - UPS (?<updaname>\S+) on line power
+    Power loss:
+    - UPS (?<updaname>\S+) on battery 
+  Error:
+    Comminications lost:
+    - Communications with UPS \S+ lost
+    Comminications established:
+    - Communications with UPS \S+ established
+    Network:
+    - Poll UPS \S+ failed - Server disconnected
+    - 'UPS \S+ connect failed: No such host'

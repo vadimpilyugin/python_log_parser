@@ -1,0 +1,4 @@
+---
+regex: dbus
+service: dbus
+templates: 

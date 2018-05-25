@@ -1,0 +1,5 @@
+---
+log_folder: '../../log_parser/logs/'
+report_file: 'report.yml'
+templates: './templates/'
+log_formats: 'log_formats.yml'

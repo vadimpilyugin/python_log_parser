@@ -1,0 +1,8 @@
+---
+regex: colord
+service: colord
+templates:
+  Error:
+    No such device or address:
+    - "(message repeated \\d+ times: \\[ )?\\(colord:\\d+\\): Cd\\-WARNING \\*\\*:
+      failed to get session \\[pid \\d+\\]: Нет такого устройства или адреса(\\])?"

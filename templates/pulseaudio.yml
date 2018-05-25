@@ -1,0 +1,68 @@
+regex: 'pulseaudio'
+service: 'pulseaudio'
+templates:
+  Warning:
+    Profile not connected:
+    - '\[pulseaudio\] module-\S+: Default profile not connected, selecting \S+ profile'
+    Skipping in audio stream:
+    - '\[bluetooth\] .* Skipping .* in audio stream'
+    Endpoint unregistered:
+    - 'Endpoint (un)?registered: sender=.* path=/MediaEndpoint/A2DP(Source|Sink)'
+    Ignore:
+    - 'Not enough free handles to register service'  
+    - 'Control: Refusing unexpected connect'
+
+  Error:
+    Not authorized:
+    - '\[pulseaudio\] .* failed for transport /org/bluez/hci.* \(Operation Not Authorized\)'
+    Not connected:
+    - '\[pulseaudio\] .* Refused to switch profile to a2dp_sink: Not connected'
+    - '.*Unable to get io data for Headset Voice gateway: getpeername: Transport endpoint is not connected'
+    Failed to create sink input: 
+    - '\[pulseaudio\] .*: Failed to create sink input: sink is suspended'
+    Failed to obtain handles:
+    - 'Failed to obtain handles for "Service Changed" characteristic'
+    Sap driver fail:
+    - Sap driver initialization failed
+    - 'sap-server: Operation not permitted'
+    Ignore:
+    - 'Error adding Link Loss service'
+    - 'gatt-time-server: Input/output error '
+    - 'avrcp-controller profile connect failed for \S+: Operation already in progress'
+  
+  Debug:
+    Ignore:
+    - '\[pulseaudio\] backend-native.c: connect():'
+    - '\[pulseaudio\] .* alsa-util.c:'
+    - '\[alsa-sink-.*\] alsa-util.c'
+    - '\[bluetooth\] backend-native.c'
+    - '\[pulseaudio\] bluez5-util.c'
+    - '\[pulseaudio\] module-bluez5-device.c'
+    - '/org/bluez/hci.*: fd.* ready'
+    - '\[.*\] alsa-util.c: snd_pcm_dump'
+    - '\[.*\] alsa-util.c: Hooks PCM'
+    - '\[.*\] alsa-util.c: Its setup is'
+    - '\[.*\] alsa-util.c: stream : PLAYBACK'
+    - '\[.*\] alsa-util.c: access : MMAP_INTERLEAVED'
+    - '\[.*\] alsa-util.c: format : S16_LE'
+    - '\[.*\] alsa-util.c: subformat : STD'
+    - '\[.*\] alsa-util.c: channels : \d+'
+    - '\[.*\] alsa-util.c: rate : \d+'
+    - '\[.*\] alsa-util.c: exact rate : \d+'
+    - '\[.*\] alsa-util.c: msbits : \d+'
+    - '\[.*\] alsa-util.c: buffer_size : \d+'
+    - '\[.*\] alsa-util.c: period_size : \d+'
+    - '\[.*\] alsa-util.c: period_time : \d+'
+    - '\[.*\] alsa-util.c: tstamp_mode : ENABLE'
+    - '\[.*\] alsa-util.c: tstamp_type : MONOTONIC'
+    - '\[.*\] alsa-util.c: period_step : \d+'
+    - '\[.*\] alsa-util.c: avail_min : \d+'
+    - '\[.*\] alsa-util.c: period_event : \d+'
+    - '\[.*\] alsa-util.c: start_threshold : -?\d+'
+    - '\[.*\] alsa-util.c: stop_threshold : \d+'
+    - '\[.*\] alsa-util.c: silence_threshold: \d+'
+    - '\[.*\] alsa-util.c: silence_size : \d+'
+    - '\[.*\] alsa-util.c: boundary : \d+'
+    - '\[.*\] alsa-util.c: Slave: Hardware PCM card '
+    - '\[.*\] alsa-util.c: hw_ptr : \d+'
+    - '\[.*\] alsa-util.c: appl_ptr : \d+'

@@ -1,0 +1,25 @@
+---
+regex: influxd
+service: influxd
+templates:
+  Debug:
+    Ignore:
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z retention policy shard deletion
+      check commencing service=retention"
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z Sending usage statistics to usage\\.influxdata\\.com"
+    - "\\[tcp\\] \\d+/\\d+/\\d+ \\d+:\\d+:\\d+ tcp\\.Mux: handler not registered:
+      \\d+\\. Connection from \\d+\\.\\d+\\.\\d+\\.\\d+:\\d+ closed"
+    - "\\[tcp\\] \\d+/\\d+/\\d+ \\d+:\\d+:\\d+ tcp\\.Mux: cannot read header byte:
+      EOF"
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z read request: invalid character
+      '\\\\x\\d+' looking for beginning of value"
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z new shard group \\d+ successfully
+      precreated for database _internal, retention policy monitor service=metaclient"
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z /var/lib/influxdb/data/_internal/monitor/\\d+
+      database index loaded in \\d+\\.\\d+µs service=shard"
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z Snapshot for path /var/lib/influxdb/data/_internal/monitor/\\d+
+      written in \\d+\\.\\d+ms engine=tsm\\d+"
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z deleted shard group \\d+ from database
+      _internal, retention policy monitor service=retention"
+    - "\\[I\\] \\d+\\-\\d+\\-\\d+T\\d+:\\d+:\\d+Z shard ID \\d+ from database _internal,
+      retention policy monitor, deleted service=retention"

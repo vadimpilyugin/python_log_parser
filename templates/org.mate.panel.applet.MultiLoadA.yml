@@ -1,0 +1,4 @@
+---
+regex: org\.mate\.panel\.applet\.MultiLoadA
+service: org.mate.panel.applet.MultiLoadA
+templates: 

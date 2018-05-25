@@ -1,0 +1,27 @@
+regex: 'ntpd'
+service: 'ntpd'
+templates:
+  Error:
+    Name resolution failure:
+    - 'error resolving pool \S+: Temporary failure in name resolution'
+    - 'error resolving pool \S+: No address associated with hostname'
+    
+  Warning:
+    Inconsistent timestamps:
+    - 'receive: KoD packet from \S+ has inconsistent .* timestamps.\s+Ignoring'
+  
+  Debug:
+    Terminated:
+    - 'ntpd exiting on signal 15 \(Terminated\)'
+    Starting:
+    - 'ntpd .*: Starting'
+    Ignore:
+    - 'Soliciting pool server '
+    - 'Listen normally on '
+    - 'Deleting interface'
+    - 'new interface\(s\) found: waking up resolver'
+    - '\S+ local addr \S+ ->'
+    - 'Command line: /usr/sbin/ntpd .*'
+    - 'proto: precision = '
+    - 'Listen and drop on '
+    - 'Listening on routing socket on .* for interface updates'

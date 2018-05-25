@@ -1,0 +1,13 @@
+---
+regex: auth
+service: auth
+templates:
+  Debug:
+    Ignore:
+    - Operator of unix\-session:c\d+ successfully authenticated as unix\-user:(?<user>.*)
+      to gain ONE\-SHOT authorization for action
+    - 'pam_unix\(dovecot:auth\): check pass; user unknown'
+  Warning:
+    Auth failure:
+    - 'pam_unix\(dovecot:auth\): authentication failure; logname=.* uid=\d+ euid=\d+
+      tty=dovecot ruser=(?<user>.*) rhost=(?<ip>.*)'

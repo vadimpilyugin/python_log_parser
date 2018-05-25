@@ -1,0 +1,10 @@
+regex: 'exim4'
+service: 'exim4'
+templates:
+  Warning:
+    Exim paniclog has non-zero size:
+    - 'ALERT: exim paniclog \S+ has non-zero size, mail system possibly broken'
+  Error:
+    Auth fail:
+    - 'pam_unix\(exim:auth\): check pass; user unknown'
+    - 'pam_unix\(exim:auth\): authentication failure; logname=\S* uid=\d+ euid=\d+ tty=\S* ruser=(?<user>\S*) rhost=\S*'

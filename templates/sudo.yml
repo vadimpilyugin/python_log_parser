@@ -1,0 +1,4 @@
+---
+regex: sudo
+service: sudo
+templates: 

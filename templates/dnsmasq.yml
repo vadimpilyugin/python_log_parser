@@ -1,0 +1,4 @@
+---
+regex: dnsmasq
+service: dnsmasq
+templates: 

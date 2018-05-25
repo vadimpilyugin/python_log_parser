@@ -1,41 +1,41 @@
 {
-  "/": {
-    "handler" : "root",
-    "methods" : ["GET"],
-    "params" : []
-  },
-  "/distribution": {
-    "handler" : "distrib",
-    "methods" : ["GET"],
-    "params" : ["id"]
-  },
-  "/counter": {
-    "handler" : "counter",
-    "methods" : ["GET"],
-    "params" : ["id"]
-  },
   "/layout": {
     "handler" : "layout",
     "methods" : ["GET"],
     "params" : []
   },
-  "/layout/server": {
-    "handler" : "server",
+  "/layout/distributions": {
+    "handler" : "layout_distributions",
     "methods" : ["GET"],
     "params" : ["server"]
   },
-  "/distribution/failed/services": {
-    "handler" : "failed_services",
+  "/layout/counters": {
+    "handler" : "layout_counters",
+    "methods" : ["GET"],
+    "params" : ["server"]
+  },
+  "/layout/failed": {
+    "handler" : "layout_failed",
     "methods" : ["GET"],
     "params" : []
   },
-  "/distribution/failed/templates": {
-    "handler" : "failed_templates",
+  "/parse/single" : {
+    "handler" : "parse_single",
+    "methods" : ["POST"],
+    "params" : ["server","filename"]
+  },
+  "/logs/servers" : {
+    "handler" : "logs_servers",
     "methods" : ["GET"],
     "params" : []
   },
-  "/distribution/failed/formats": {
-    "handler" : "failed_formats",
+  "/logs/filenames" : {
+    "handler" : "logs_filenames",
+    "methods" : ["GET"],
+    "params" : ["server"]
+  },
+  "/config" : {
+    "handler" : "config",
     "methods" : ["GET"],
     "params" : []
   }

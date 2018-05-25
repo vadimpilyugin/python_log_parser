@@ -1,0 +1,4 @@
+---
+regex: pgsql
+service: pgsql
+templates: 

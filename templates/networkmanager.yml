@@ -1,0 +1,18 @@
+---
+regex: networkmanager
+service: networkmanager
+templates:
+  Debug:
+    State change:
+    - 'device \(\S+\): link (dis)?connected'
+    - 'device \(\S+\): state change:'
+    Ignore:
+    - 'device \(\S+\): disconnecting for new activation request.'
+    - 'device \(\S+\): Activation: successful, device activated.'
+    - 'policy: set .* \(\S+\) as default for IPv\d routing and DNS'
+    - 'manager: NetworkManager state is now \S+'
+    - " audit: op="
+    - 'dhcp4 \(\S+\): canceled DHCP transaction'
+    - 'dhcp4 \(\S+\): state changed bound'
+    - 'dns-mgr: Writing DNS information to /sbin/resolvconf'
+    - 'manager: kernel firmware directory ./lib/firmware. changed'

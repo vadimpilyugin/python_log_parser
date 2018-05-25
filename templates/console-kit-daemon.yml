@@ -1,0 +1,14 @@
+---
+regex: console\-kit\-daemon
+service: console-kit-daemon
+templates:
+  Error:
+    Ignore:
+    - "\\(process:\\d+\\): GLib\\-CRITICAL \\*\\*: g_slice_set_config: assertion 'sys_page_size
+      == \\d+' failed"
+    - missing action
+    - 'GLib\-CRITICAL: Source ID (?<id>\d+) was not found when attempting to remove
+      it'
+    Source ID not found:
+    - 'console\-kit\-daemon\[\d+\]: GLib\-CRITICAL: Source ID (?<id>\d+) was not found
+      when attempting to remove it'

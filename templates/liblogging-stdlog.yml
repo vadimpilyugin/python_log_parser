@@ -1,0 +1,4 @@
+---
+regex: liblogging\-stdlog
+service: liblogging-stdlog
+templates: 

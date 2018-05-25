@@ -1,0 +1,4 @@
+---
+regex: lxc\-net
+service: lxc-net
+templates: 

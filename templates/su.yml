@@ -1,0 +1,20 @@
+---
+regex: su
+service: su
+templates:
+  Info:
+    Successfull attempt:
+    - Successful su for (?<username>\S+) by root
+    Command as root:
+    - 'serg : TTY=pts/\d+ ; PWD=.* ; USER=root ; COMMAND=/usr/bin/apt '
+    - 'serg : TTY=pts/\d+ ; PWD=.* ; USER=root ; COMMAND=/usr/bin/aptitude '
+    - 'serg : TTY=pts/\d+ ; PWD=.* ; USER=root ; COMMAND=(?<command>.*)'
+    Ignore:
+    - 'pam_unix\(sudo:session\): session opened for user root by (?<user>\S+)\(uid=\d+\)'
+    - 'pam_unix\(sudo:session\): session opened for user root by \(uid=\d+\)'
+    - 'pam_unix\(sudo:session\): session closed for user root'
+  Debug:
+    Something:
+    - "\\+ \\?\\?\\? root:(?<username>\\S+)"
+    pam session activity:
+    - 'pam_unix\(su:session\): session (\S+) for user (?<username>\S+)'

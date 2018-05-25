@@ -1,0 +1,70 @@
+---
+regex: dovecot
+service: dovecot
+templates:
+  Info:
+    Discard:
+    - 'lda\(.*\): sieve: msgid=.*(?<count>.*): marked message to be discarded if not
+      explicitly delivered \(discard action\)'
+    Store:
+    - 'lda\(.*\): sieve: msgid=.*: stored mail into mailbox'
+    - 'lda\(.*\): sieve: msgid=.*: forwarded to'
+    - 'lda\(.*\): msgid=.*: saved mail to'
+    Login:
+    - "(?<login_method>imap|pop3|managesieve)-login: Login: user=.*, method=(?<method>\\S*),
+      rip=(?<user_ip>[0-9.]*)"
+    Logout:
+    - Connection closed top=\S+, retr=\S+, del=\S+, size=\d+
+  Debug:
+    EC type:
+    - "(imap|pop3|managesieve)-login: Debug: SSL: elliptic curve secp384r1 will be
+      used for ECDH and ECDHE key exchanges"
+    - 'managesieve-login: Debug: SSL: elliptic curve secp384r1 will be used for ECDH
+      and ECDHE key exchanges'
+    Disconnect:
+    - 'pop3\(.*\): Disconnected: Logged out'
+    - 'managesieve\((?<username>.*)\): Disconnected: Logged out bytes=\d+/\d+'
+    SSL:
+    - "(imap)|(pop3)-login: Debug: SSL: where=0x"
+    - "(imap)|(pop3)-login: Debug: SSL alert: close notify"
+    - 'managesieve-login: Debug: SSL: where=\S+, ret=\S+:'
+    Ignore:
+    - Server shutting down
+  Warning:
+    Disconnected without auth:
+    - "(imap|pop3|managesieve)-login: Disconnected \\(no auth attempts in \\d+ secs\\):
+      user=.*, rip=(?<ip>[0-9.]*)"
+    - "(imap|pop3|managesieve)-login: Disconnected: Inactivity \\(no auth attempts
+      in \\d+ secs\\): user=.*, rip=(?<ip>[0-9.]*)"
+    SSL alert:
+    - "(imap)|(pop3)-login: Warning: SSL alert: .*"
+    Ignore:
+    - Killed with signal
+    Synchronization:
+    - 'lda\((?<username>.*)\): Warning: Maildir .*: Synchronization took \d+ seconds
+      \(\d+ new msgs, \d+ flag change attempts, \d+ expunge attempts\)'
+  Error:
+    SSL fail:
+    - "(imap)|(pop3)-login: Warning: SSL failed: .*"
+    Auth fail:
+    - "(imap|pop3|managesieve)-login: Aborted login \\(auth failed, \\d+ attempts
+      in \\d+ secs\\): user=.*, (method=\\S+, )?rip=(?<ip>[0-9.]*)"
+    - "(imap|pop3|managesieve)-login: Disconnected \\(auth failed, \\d+ attempts in
+      \\d+ secs\\): user=.*, (method=\\S+, )?rip=(?<ip>[0-9.]*)"
+    - "(imap|pop3|managesieve)-login: Disconnected: Inactivity \\(auth failed, \\d+
+      attempts in \\d+ secs\\): user=.*, (method=\\S+, )?rip=(?<ip>[0-9.]*)"
+    - "(imap|pop3|managesieve)-login: Disconnected: Too many invalid commands. \\(no
+      auth attempts in \\d+ secs\\): user=.*, (method=\\S+, )?rip=(?<ip>[0-9.]*)"
+    - 'auth\-worker\(\d+\): pam\((?<email>[^,]+),(?<user_ip>\d+\.\d+\.\d+\.\d+),<.*>\):
+      pam_authenticate\(\) failed: Authentication failure \(password mismatch\?\)'
+    - 'auth: plain\(\?,(?<user_ip>\d+\.\d+\.\d+\.\d+),<.*>\): Request timed out waiting
+      for client to continue authentication \(\d+ secs\)'
+    Login fail:
+    - 'auth-worker\(\d+\): pam\((?<user>\S+),(?<ip>[0-9.]+)\): pam_authenticate\(\)
+      failed: Authentication failure \(password mismatch\?\)'
+    - 'pop\d+\-login: Aborted login \(no auth attempts in \d+ secs\): user=<>, rip=(?<rip>\d+\.\d+\.\d+\.\d+),
+      lip=(?<lip>\d+\.\d+\.\d+\.\d+)'
+    - 'pop\d+\-login: Fatal: Couldn''t parse private ssl_key'
+    Startup fail:
+    - 'master: Error: service\(pop\d+\-login\): command startup failed, throttling
+      for \d+ secs'

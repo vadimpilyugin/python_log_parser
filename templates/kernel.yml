@@ -1,0 +1,93 @@
+---
+regex: kernel
+service: kernel
+templates:
+
+  Error:
+    Driver failure:
+    - 'FAILED Result: hostbyte=(\S+) driverbyte=(\S+)'
+    Sense key hardware error:
+    - "\\[\\d+\\.\\d+\\] sd \\d+:\\d+:\\d+:\\d+: \\[sdd\\] tag\\#\\d+ Sense Key :
+      Hardware Error \\[current\\] \\[descriptor\\] "
+    Segmentation fault:
+    - 'segfault'
+    Bluetooth troubles:
+    - 'Bluetooth: hci\d+ SCO packet for unknown connection handle'
+    - 'Bluetooth: \S+ hardware error \S+'
+    Disk troubles:
+    - 'sd [0-9:]+ \[(?<disk>\S+)\] tag#0 (?<message>.*)'
+    Memory corruption:
+    - 'Corrupted low memory at \S+ \(\d+ phys\) = \S+'
+
+  Debug:
+    Disks:
+    - 'end_request: I/O error, dev \S+, sector \d+'
+    - 'sd [:0-9]+ \[\S+\] Attached SCSI removable disk'
+    Ignore:
+    - 'Sense: No additional sense information'
+    - "\\[\\S+\\] input: \\S+ as \\S+"
+    - ATA command pass through
+    USB detected:
+    - 'usb-storage [0-9.:-]+: USB Mass Storage device detected'
+    Ethernet up/down:
+    - '.*eth\d+: link down'
+    - '.*eth\d+: link up'
+    New devices:
+    - 'input: \S+ as /devices/virtual/input/\S+'
+    IPv4:
+    - 'IPv4: martian source .* from (?<ip>[0-9.]+), on dev (?<device>)'
+    Network:
+    - '\S+: \S+ NIC Link is Up \d+ Mbps Full Duplex, Flow Control: RX/TX'
+    - 'UDP: short packet: From .* to '
+    - 'net_ratelimit: \d+ callbacks suppressed'
+    Disconnected usb:
+    - 'usb [0-9.-]+: USB disconnect, device nudmber \S+'
+    New usb device:
+    - 'usb [0-9.-]+: new (high|full)-speed USB device number \S+ using \S+'
+    - 'usb [0-9.-]+: New USB device found, idVendor=\S+, idProduct=\S+'
+    - 'usb [0-9.-]+: New USB device strings:'
+    - 'usb [0-9.-]+: Product:'
+    - 'usb [0-9.-]+: Manufacturer:'
+    - 'usb [0-9.-]+: SerialNumber:'
+    SCSI device attached:
+    - 'sd [0-9:.-]+: Attached scsi generic '
+    - 'sd [0-9:.-]+: \[sd\S+\] \d+ 512-byte logical blocks'
+    - 'sd [0-9:.-]+: \[sd\S+\] Write Protect is off'
+    - 'sd [0-9:.-]+: \[sd\S+\] Mode Sense:'
+    - 'sd [0-9:.-]+: \[sd\S+\] No Caching mode page found'
+    - 'sd [0-9:.-]+: \[sd\S+\] Assuming drive cache: write through'
+    - 'sd [0-9:.-]+: \[sd\S+\] Attached SCSI (removeble )?disk'
+    Ignore:
+    - 'll header: .*'
+    - '\[[0-9.]+\] sd\S:$'
+    - 'sctp: Hash tables configured '
+    - 'scsi host\d+: usb-storage'
+    - 'scsi [0-9:.-]+: Direct-Access '
+    - 'sd\S+: sd\S+'
+    - 'md: using \d+k window, over a total of'
+    - 'sd [:0-9]+ \[\S+\] CDB:'
+    - 'Result: hostbyte=DID_ERROR driverbyte=DRIVER_OK'
+    - 'Read\(\S+\): [ 0-9a-fA-F]+'
+    - 'traps: \S+ trap int3 '
+    - '\[[\d.]+\] NVRM:'
+    - 'DCCP: Activated CCID'
+    - 'rfkill: input handler enabled'
+    - 'SGI XFS with ACLs, security attributes, realtime, no debug enabled'
+    - 'JFS: nTxBlock = \d+, nTxLock = \d+'
+    - '\[[\d.]+\] ntfs: driver '
+  
+  Warning:
+    Host ignores redirect:
+    - 'IPv4: host \S+ ignores redirects for \S+ to \S+'
+    Interrupt took too long:
+    - 'perf interrupt took too long'
+    UDP bad checksum:
+    - 'UDP: bad checksum. From '
+    FAT warning:
+    - 'FAT-fs \S+: utf8 is not a recommended IO charset for FAT filesystems, filesystem will be case sensitive!'
+    - 'FAT-fs \S+: Volume was not properly unmounted. Some data may be corrupt. Please run fsck.'
+    Ebtables unregistered:
+    - 'Ebtables v\S+ (un)?registered'
+    Filesystem unregistered:
+    - 'QNX4 filesystem \S+ (un)?registered'
+          

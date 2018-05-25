@@ -1,0 +1,20 @@
+---
+regex: certbot(\d*)
+service: certbot
+templates:
+  Debug:
+    Ignore:
+    - 'Attempting to renew cert from /etc/letsencrypt/renewal/.*\.conf produced an
+      unexpected error: urn:acme:error:rateLimited :: There were too many requests
+      of a given type :: Error creating new cert :: too many certificates already
+      issued for exact set of domains: (?<address>.*). Skipping\.'
+    - 'The following certs are not due for renewal yet:'
+    - "/etc/letsencrypt/live/.*\\.pem \\(skipped\\)"
+    - 'The following certs were successfully renewed:'
+    - "/etc/letsencrypt/live/.*/fullchain\\.pem \\(success\\)"
+    - 'The following certs could not be renewed:'
+  Error:
+    failed:
+    - "/etc/letsencrypt/live/(?<address>.*)/fullchain\\.pem \\(failure\\)"
+    Ignore:
+    - "\\d+ renew failure\\(s\\), \\d+ parse failure\\(s\\)"

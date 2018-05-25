@@ -1,0 +1,48 @@
+---
+regex: bluetooth
+service: bluetooth
+templates:
+  Error:
+    Endpoint is not connected:
+    - 'Unable to get io data for Headset Voice gateway: getpeername: Transport endpoint
+      is not connected'
+    Endpoint registration error:
+    - 'Endpoint (un)?registered: sender=.* path=\/MediaEndpoint\/A2DP(Source|Sink)'
+    Handles error:
+    - Not enough free handles to register service
+    - Failed to obtain handles for "Service Changed" characteristic
+    Error adding Link Loss service:
+    - Error adding Link Loss service
+    Current Time Service could not be registered:
+    - Current Time Service could not be registered
+    Sap failure:
+    - Sap driver initialization failed.
+    - 'sap-server: Operation not permitted'
+    gatt-time-server io error:
+    - 'gatt-time-server: Input\/output error'
+    Browsing connection refused:
+    - 'Browsing: connect error: Connection refused'
+    Host is down:
+    - 'Unable to get Headset Voice gateway SDP record: Host is down'
+    Connection failed:
+    - avrcp-controller profile connect failed for \S+ Operation already in progress
+    Failed to change sep state:
+    - 'Error changing sep state: stream not available'
+  Warning:
+    Unexpected connect:
+    - 'Control: Refusing unexpected connect'
+    Skipping content in audio stream:
+    - "\\[bluetooth\\] Skipping .* in audio stream"
+  Debug:
+    Ignore:
+    - message repeated \d+ times
+    - "\\[alsa-sink-.*\\] alsa-util.c"
+    Backend reported connect:
+    - "\\[bluetooth\\] backend-native.c: connect"
+    Terminating:
+    - "^Terminating$"
+    fd ready:
+    - "\\S+: fd\\(\\d+\\) ready"
+    Connection failed:
+    - 'Headset Voice gateway profile connect failed for (?<mac_addr>\S+): Operation
+      already in progress'

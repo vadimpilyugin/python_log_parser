@@ -1,0 +1,21 @@
+---
+regex: snap
+service: snap
+templates:
+  Debug:
+    Ignore:
+    - All snaps up to date
+    - 'snapmgr\.go:\d+: No snaps to auto\-refresh found'
+    - 'error: cannot use snap\-repair on a classic system'
+    - 'snapmgr\.go:\d+: DEBUG: Next refresh scheduled for '
+    - 'taskrunner\.go:\d+: DEBUG: Running task \d+ on Do: '
+    - 'store\.go:\d+: DEBUG: Deltas enabled'
+    - 'daemon\.go:\d+: DEBUG: uid=\d+'
+    - 'cmd\.go:\d+: DEBUG: restarting into '
+    - 'store\.go:\d+: DEBUG: Available deltas returned by store'
+    - 'store\.go:\d+: DEBUG: Successfully downloaded delta for'
+    - 'store\.go:\d+: DEBUG: Successfully applied delta for'
+    - 'desktop\.go:\d+: DEBUG: update\-desktop\-database successful'
+    - 'task\.go:\d+: DEBUG: .* INFO Requested daemon restart\.'
+    - 'helpers\.go:\d+: cannot connect plug "network\-bind" from snap "core", no such
+      plug'

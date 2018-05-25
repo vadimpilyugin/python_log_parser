@@ -1,0 +1,36 @@
+regex: 'motion'
+service: 'motion'
+templates:
+  Info:
+    Motion:
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S)+\] motion_loop: End of event \d+'
+    Event:
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] motion_detected: Motion detected - starting event \d+'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] event_newfile: File of type \d+ saved to:'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] httpd_run: motion-httpd - Read from client'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] event_new_video FPS \d+'
+  
+  Error:
+    URL open error:
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] ffmpeg_open: url_fopen - error opening file .* ... check access rights to target directory:'
+    ffmpeg file create error:
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] event_ffmpeg_newfile: ffopen_open error creating \(new\) file \[.*\]:'
+  
+  Debug:
+    Ignore:
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] motion_loop: Thread exiting'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] stream_stop: Clos(ed|ing) motion-stream listen socket & active motion-stream sockets'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] vid_close: Closing video device .*'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] main: Motion thread \d+ restart'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] motion_init: Thread \d+ started , motion detection Enabled'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] vid_v4lx_start: Using videodevice .* and input [0-9-]+'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] v4l2_(do_)?get_capability:'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] v4l2_(do_)?select_input:'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] v4l2_(do_)?set_pix_format'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] v4l2_(do_)?scan_controls:'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] vid_v4lx_start: Using V4L2'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] image_ring_resize: Resizing pre_capture buffer to \d+ items'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] http_bindsock: motion-stream testing :'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] http_bindsock: motion-stream Bound :'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] motion_init: Started motion-stream server'
+    - '\[(?<motion>\S+)\] \[(?<motion_type>\S+)\] \[(?<motion_mask>\S+)\] read_http_request: motion-stream READ give up!:'

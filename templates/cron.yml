@@ -1,0 +1,12 @@
+---
+regex: "^cron|CRON"
+service: cron
+templates:
+  Info:
+    Session activity:
+    - 'pam_unix\(cron:session\): session (?<action>\S+) for user (?<username>\S+)'
+    Command line triggered:
+    - "\\((?<username>[A-Za-z0-9.\\-]+)\\) CMD \\((?<command>.*)\\)"
+  Debug:
+    Reload:
+    - "\\(\\S+\\) RELOAD \\(crontabs\\/\\S+\\)"

@@ -1,0 +1,15 @@
+yaml_adapter.py
+web/src/components/Blocks.vue
+web/src/components/Periodicity.vue
+web/src/components/PopupMessage.vue
+web/src/components/TemplateEditor.vue
+input_data*
+list*
+logp/
+main.py
+.ipynb_checkpoints/
+Untitled.ipynb
+Untitled1.ipynb
+__pycache__/
+module.py
+test_main.py

@@ -1,0 +1,14 @@
+---
+regex: os\-prober
+service: os-prober
+templates:
+  Debug:
+    Skipping DOS partition:
+    - 'debug: \S+ DOS extended partition; skipping'
+    Swap info:
+    - 'debug: \S+ is active swap'
+    Ignore:
+    - 'debug: running /usr/lib/os\-probes/.* on .*'
+    - 'File descriptor \d+ \(pipe:\[\d+\]\) leaked on lvs invocation\. Parent PID
+      \d+: log\-output'
+    - 'debug: os detected by /usr/lib/os\-probes/\d+mounted\-tests'

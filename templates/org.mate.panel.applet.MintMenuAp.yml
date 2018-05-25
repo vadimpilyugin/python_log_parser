@@ -1,0 +1,15 @@
+---
+regex: org\.mate\.panel\.applet\.MintMenuAp
+service: org.mate.panel.applet.MintMenuAp
+templates:
+  Error:
+    Ignore:
+    - "\\[\\d+\\-\\d+\\-\\d+ \\d+:\\d+:\\d+,\\d+ pyinotify ERROR\\] rm_watch: cannot
+      remove WD=\\d+, Errno=Недопустимый аргумент \\(EINVAL\\)"
+  Debug:
+    Ignore:
+    - "\\[TimeStamp\\]\\-\\-\\-\\-\\-main\\-\\-\\-\\-\\-begin"
+    - "\\(pix:\\d+\\): Gtk\\-CRITICAL \\*\\*: gtk_widget_set_visible: assertion 'GTK_IS_WIDGET
+      \\(widget\\)' failed"
+    - "\\(pix:\\d+\\): Gtk\\-CRITICAL \\*\\*: .*: assertion .* failed"
+    - "\\(pix:\\d+\\): GLib\\-GObject\\-CRITICAL \\*\\*: .*: assertion .* failed"

@@ -4,6 +4,7 @@ import re
 SORT_INTERVAL = 5000
 
 class Template:
+  template_map = {}
   def __init__(self, regex_s, category, level, template_id):
     self.regex_s = regex_s
     self.regex = re.compile(regex_s)
@@ -12,14 +13,18 @@ class Template:
     self.id = template_id
     self.count = 0
     self.hsh = {
-      fields.TEMPLATE_REGEX : regex_s,
+      # fields.TEMPLATE_REGEX : regex_s,
       fields.LEVEL : level,
       fields.TEMPLATE_CATEGORY : category,
       fields.TEMPLATE_ID : template_id
     }
+    Template.template_map[self.id] = self
+  @classmethod
+  def get(cls, template_id):
+    return cls.template_map[template_id]
 
   def parse(self, msg):
-    md = self.regex.match(msg)
+    md = self.regex.search(msg)
     if md:
       self.count += 1
       hsh = md.groupdict()
@@ -48,10 +53,11 @@ class ServiceTemplates:
     return md
 
 class Service:
-  def __init__(self, regex, name, service_templates=ServiceTemplates()):
+  def __init__(self, regex, name, categories={}, service_templates=ServiceTemplates()):
     self.regex = regex
     self.name = name
     self.service_templates = service_templates
+    self.categories = categories
 
   def is_service(self, service_name):
     md = self.regex.match(service_name)
@@ -62,6 +68,9 @@ class Service:
 
   def parse(self, msg):
     return self.service_templates.parse(msg)
+
+  def get_categories(self):
+    return list(self.categories.keys()).sort()
 
   def __repr__(self):
     return self.name
@@ -82,3 +91,11 @@ class ServiceSet:
           self.cached_services[service_name] = srv
           break
     return service
+
+  def get_services_categories(self):
+    return list(
+      map(
+        lambda x: {fields.NAME: x.name, fields.CATEGORIES:x.get_categories()}, 
+        self.services
+      )
+    ).sort()

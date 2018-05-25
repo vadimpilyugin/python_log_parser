@@ -1,0 +1,9 @@
+---
+regex: Tor
+service: Tor
+templates:
+  Info:
+    Tor uptime stats:
+    - 'Heartbeat: Tor''s uptime is (?<uptime_days>\d+) days (?<uptime_hours>\d+):\d+
+      hours, with (?<circuits_opened>\d+) circuits open\. I''ve sent (?<mb_sent>\d+\.\d+)
+      MB and received (?<mb_received>\d+\.\d+) MB\.'

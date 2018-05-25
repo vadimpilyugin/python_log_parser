@@ -1,0 +1,7 @@
+---
+regex: NetworkManager
+service: NetworkManager
+templates:
+  Error:
+    Password verification failed:
+    - Password verification failed

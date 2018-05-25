@@ -1,0 +1,16 @@
+---
+regex: org\.gnome\.*
+service: org.gnome.Hamster
+templates:
+  Debug:
+    Ignore:
+    - "\\[\\d+   from gi\\.repository import PangoCairo as pangocairo"
+    - "/usr/lib/python\\d+\\.\\d+/dist\\-packages/hamster/lib/stuff\\.py:\\d+: PyGIWarning:
+      Gtk was imported without specifying a version first"
+    - from gi\.repository import Gtk as gtk
+    - GConf was imported without specifying a version first
+    - from gi\.repository import GConf as gconf
+    - 'PyGIWarning: PangoCairo was imported without specifying a version first'
+    - "\\[\\d+ ERROR:dbus\\.proxies:Introspect error on :\\d+\\.\\d+:/org/gnome/Hamster:
+      dbus\\.exceptions\\.DBusException: org\\.freedesktop\\.DBus\\.Error\\.NoReply:
+      Message recipient disconnected from message bus without replying"

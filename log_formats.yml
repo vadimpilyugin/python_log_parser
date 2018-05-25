@@ -1,17 +1,12 @@
 ---
 ApacheFormat:
   service: apache
+  date: '%d/%b/%Y:%H:%M:%S %z'
   regex: |
     (?<user_ip>\S+) # may be ipv6
     \s-\s-\s
     \[
-      (?<__DAY__>\d+) \/ 
-      (?<__MONTH__>[a-zA-Z]+) \/ 
-      (?<__YEAR__>\d+) : 
-      (?<__HOUR__>\d+) : 
-      (?<__MINUTE__>\d+) : 
-      (?<__SECOND__>\d+) \s 
-      (?<__TIMEZONE__>\+\d+)
+      (?<__DATE__>[^\]]+)
     \]
     \s
     "
@@ -26,26 +21,18 @@ ApacheFormat:
     (?<__SERVER__>\S+)
     
 SyslogFormat:
+  date: '%b %d %H:%M:%S'
   regex: |
-    (?<__MONTH__>\S+)\s+      # Oct
-    (?<__DAY__>\d+)\s+        # 9
-    (?<__HOUR__>\d+):         # 06:
-    (?<__MINUTE__>\d+):       # 08:
-    (?<__SECOND__>\d+)\s+     # 05
+    (?<__DATE__>[a-zA-Z]+\s+\d+\s\d+:\d+:\d+)\s+       # Feb 25 00:12:18
     (?<__SERVER__>\S+)\s+     # newserv
     (?<__SERVICE__>[^\[:\ ]+) # systemd-logind - все до разделителя
     (\[(?<pid>\d+)\])?        # [10405] - может идти, а может и не идти за именем сервиса
     (:)?\s*(?<__MSG__>.*)     # : Accepted publickey for autocheck
 
 Fail2BanFormat:
+  date: '%Y-%m-%d %H:%M:%S'
   regex: |
-    (?<__YEAR__>\d+)-       # 2017-
-    (?<__MONTH__>\d+)-      # 02-
-    (?<__DAY__>\d+)\s+      # 05
-    (?<__HOUR__>\d+):       # 07:
-    (?<__MINUTE__>\d+):     # 05:
-    (?<__SECOND__>\d+),     # 13,
-    (\d+)   # 390
+    (?<__DATE__>[^,]+),\d+   # 2017-02-05 07:06:03,142
     \s+
     # Service, type
     (?<__SERVICE__>[^\.]+)

@@ -1,0 +1,4 @@
+---
+regex: lxd
+service: lxd
+templates: 

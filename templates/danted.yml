@@ -1,0 +1,7 @@
+---
+regex: danted
+service: danted
+templates:
+  Debug:
+    Ignore:
+    - 'info: block\(\d+\): tcp/accept \]: (?<ip>\d+\.\d+\.\d+\.\d+)\.\d+ \d+\.\d+\.\d+\.\d+\.\d+'

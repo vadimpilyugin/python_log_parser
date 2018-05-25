@@ -1,0 +1,4 @@
+---
+regex: systemd\-tmpfiles
+service: systemd-tmpfiles
+templates: 
