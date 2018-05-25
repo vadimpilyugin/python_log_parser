@@ -109,4 +109,4 @@ def apply_cors(response):
   return response
 
 if __name__ == '__main__':
-  app.run(debug=False,threaded=False,processes=1)
+  app.run(debug=False,threaded=False,processes=1,host="0.0.0.0",port=5000)
