@@ -15,7 +15,6 @@ module.py
 test_main.py
 .eggs/
 Pipfile.lock
-README.rst
 build/
 log_parser.egg-info/
 dist/*.whl
