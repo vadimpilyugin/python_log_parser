@@ -26,12 +26,12 @@
       <li v-for="(item,i) in files">
         <div class="list-dir">
           <div>
-            <input type="checkbox" :disabled="clicked" style="margin-right: 1rem;" v-model="item.checked" @click="onServerCheck(i)">
+            <input type="checkbox" :disabled="clicked || item.error" style="margin-right: 1rem;" v-model="item.checked" @click="onServerCheck(i)">
             <a :href="'#'+item.server" data-toggle="collapse">{{item.server}}</a>
           </div>
-          <span class="counter" v-show="item.checked && clicked">
-            <span class="green-counter">OK: {{item.ok}}</span> / <span class="red-counter">FAIL: {{item.fail}}</span>
-          </span>
+          <!-- <span class="counter" v-show="item.checked && clicked">
+            <span class="green-counter">OK</span> / <span class="red-counter">FAIL</span>
+          </span> -->
         </div>
         <div :id="item.server" class="collapse show">
           <ul class="list-unstyled" style="padding-left: 40px;">
@@ -122,6 +122,7 @@ export default {
           servers[i] = {
             server : servers[i],
             checked : true,
+            error: false,
             files : [],
             checked_no : 0,
             visible:false,
@@ -141,7 +142,8 @@ export default {
             servers[i].files = files;
             servers[i].checked_no = files.length;
           }, this.errors, (data) => {
-            console.log(data);
+            servers[i].checked = false;
+            servers[i].error = true;
           });
         }
         this.files = servers;

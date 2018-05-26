@@ -1,10 +1,10 @@
-import parser as prs
-import log_formats as fmt
-import service as srv
-import loader as ld
-import aggregation as agg
-import fields
-from config import config
+from . import parser as prs
+from . import log_formats as fmt
+from . import service as srv
+from . import loader as ld
+from . import aggregation as agg
+from . import fields
+from .config import config
 import os
 import pprint
 import re
@@ -113,6 +113,8 @@ def parse_single_ep(server, filename):
       'ok' : 0,
       'fail' : 0
     }
+    format_errors = 0
+    MAX_FORMAT_ERRORS = 100
     for i in p.parsed_logline_stream(f):
       match_data = i[fields.MATCH_DATA]
       if i[fields.ERRNO] != prs.OK:
@@ -122,7 +124,8 @@ def parse_single_ep(server, filename):
         elif i[fields.ERRNO] == prs.NO_TEMPLATE:
           # match_data.update({fields.MESSAGE:i[fields.REASON]})
           err_templates.insert(match_data)
-        elif i[fields.ERRNO] == prs.NO_FORMAT:
+        elif i[fields.ERRNO] == prs.NO_FORMAT and format_errors < MAX_FORMAT_ERRORS:
+          format_errors += 1
           i.update({fields.LOGLINE:i[fields.REASON], fields.FILENAME:filename})
           err_format.insert(i)
           # print('Current weight:', err_format.get_distrib()[fields.WEIGHT])
@@ -150,7 +153,7 @@ def logs_servers_ep():
   l.sort()
   return l
 
-def logs_filenames_ep(server, filter_out=r'.*\.gz'):
+def logs_filenames_ep(server, filter_out=r'.*\.gz|.*\.tgz|.*\.zip'):
   l = []
   for i in os.listdir(os.path.join(config['log_folder'],server)):
     if not re.match(filter_out, i):

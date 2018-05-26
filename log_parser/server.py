@@ -1,12 +1,13 @@
 import json
-import handlers
-import fields
+from . import handlers
+from . import fields
 from flask import Flask, request
 from flask import jsonify
 import flask
 import sys
 import traceback
-from config import config
+from .config import config
+from .config import abs_path
 
 app = Flask(__name__)
 
@@ -29,7 +30,7 @@ ROOT = '/'
 def placeholder_ep():
   pass
 
-with open(config['api_file']) as f:
+with open(abs_path(config['api_file'])) as f:
   content = json.loads(f.read())
 
 for ep, value in content.items():
@@ -62,10 +63,10 @@ def print_request(req):
 def before_ep():
   global STATIC_FILES
   if request.path in STATIC_FILES:
-    return flask.send_file('../web'+request.path)
+    return flask.send_file(abs_path('web'+request.path))
   global ROOT
   if request.path == ROOT:
-    return flask.send_file('../web'+STATIC_FILES[0])
+    return flask.send_file(abs_path('web'+STATIC_FILES[0]))
   global content
   print_request(request)
   if request.path not in content:
@@ -109,5 +110,5 @@ def apply_cors(response):
   response.headers['Access-Control-Allow-Origin'] = "*"
   return response
 
-if __name__ == '__main__':
-  app.run(debug=False,threaded=False,processes=1,host="0.0.0.0",port=5000)
+def start(ip, port):
+  app.run(debug=False,threaded=False,processes=1,host=ip,port=port)

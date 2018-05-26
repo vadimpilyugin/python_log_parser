@@ -22,7 +22,7 @@ export function makeId() {
 
 export function apiRequest (options, onOk, errors = undefined, onFail = undefined) {
   let ep = options.url;
-  // options.url = 'http://localhost:5000' + options.url;
+  options.url = 'http://localhost:5000' + options.url;
   axios(
     options
   ).then(response => {

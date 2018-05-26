@@ -1,0 +1,8 @@
+include README.rst
+include LICENSE
+include log_parser/default.conf/*.yml
+include log_parser/default.conf/api.json
+include log_parser/default.conf/templates/*.yml
+include log_parser/web/index.html
+include log_parser/web/dist/build.js
+include log_parser/web/static/pie-chart.svg

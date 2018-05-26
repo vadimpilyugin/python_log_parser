@@ -1,4 +1,4 @@
-import fields
+from . import fields
 
 ASC_SORT = 'asc'
 DESC_SORT = 'desc'

@@ -1,11 +1,12 @@
 import json
 import pprint
 import sys
+from .config import abs_path
 
 def foo():
   pp = pprint.PrettyPrinter(indent=2)
 
-  with open('api.json') as f:
+  with open(abs_path('default.conf/api.json')) as f:
     content = json.loads(f.read())
 
 
@@ -14,7 +15,7 @@ def foo():
     args = value['params']
     if len(value['methods']) > 1:
       args.insert(0,'method')
-    print(f"def "+value['handler']+"_ep("+(', '.join(args))+"):")
+    print("def "+value['handler']+"_ep("+(', '.join(args))+"):")
     print("  return None\n")
   
 foo()

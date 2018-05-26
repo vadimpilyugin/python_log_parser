@@ -1,17 +1,18 @@
 import yaml
-import log_formats as fmt
-import service as srv
+from . import log_formats as fmt
+from . import service as srv
 import os
 import re
-import excp
-import aggregation as agg
-from config import config
-import fields
+from . import excp
+from . import aggregation as agg
+from .config import config
+from .config import abs_path
+from . import fields
 
 TEMPLATE_ID = 1
 
 def content(fn):
-  with open(fn) as f:
+  with open(abs_path(fn)) as f:
     return yaml.load(f)
 
 def normalize(s):
@@ -69,7 +70,7 @@ def load_all_services(dir):
   return srv.ServiceSet(services)
 
 def load_aggregations():
-  with open(config["report_file"]) as f:
+  with open(abs_path(config["report_file"])) as f:
     content = yaml.load(f)
   for server_name in content:
     for stat_type in content[server_name]:

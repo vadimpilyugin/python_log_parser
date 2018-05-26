@@ -2,7 +2,7 @@ import yaml
 import re
 from os import path
 import os
-import fields
+from . import fields
 
 class TemplateLoader:
   EXT = r'\.yml'

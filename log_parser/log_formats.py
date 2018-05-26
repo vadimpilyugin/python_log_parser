@@ -1,6 +1,6 @@
-import fields
-from excp import *
-from datetime import datetime
+from . import fields
+from . import excp
+# from datetime import datetime
 
 NO_SERVICE = "Отсутствует __SERVICE__"
 
@@ -9,7 +9,7 @@ class LogFormat:
     self.name = name
     self.regex = regex
     if fields.SERVICE not in regex.groupindex and service is None:
-      raise LogFormatException(NO_SERVICE)
+      raise excp.LogFormatException(NO_SERVICE)
     self.service = service
     self.date = date
 
@@ -19,8 +19,8 @@ class LogFormat:
       hsh = md.groupdict()
       if self.service is not None:
         hsh[fields.SERVICE] = self.service
-      if self.date is not None:
-        hsh[fields.DATE] = datetime.strptime(hsh[fields.DATE], self.date)
+      # if self.date is not None:
+      #   hsh[fields.DATE] = datetime.strptime(hsh[fields.DATE], self.date)
       return hsh
     return None
 

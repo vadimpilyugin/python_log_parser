@@ -1,4 +1,4 @@
-import fields
+from . import fields
 import re
 
 SORT_INTERVAL = 5000

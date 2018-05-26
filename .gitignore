@@ -13,3 +13,12 @@ Untitled1.ipynb
 __pycache__/
 module.py
 test_main.py
+.eggs/
+Pipfile.lock
+README.rst
+build/
+log_parser.egg-info/
+dist/*.whl
+dist/*.tar.gz
+dist/build/*
+log_parser/web/dist/build.js.map
