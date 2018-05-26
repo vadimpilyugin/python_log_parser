@@ -6,7 +6,7 @@ from .config import abs_path
 def foo():
   pp = pprint.PrettyPrinter(indent=2)
 
-  with open(abs_path('default.conf/api.json')) as f:
+  with open(abs_path('default.conf/api.json'), 'r', encoding='utf-8') as f:
     content = json.loads(f.read())
 
 

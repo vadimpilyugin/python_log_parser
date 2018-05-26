@@ -103,7 +103,7 @@ class Parser:
   def parse_dir(self, dir, files={}):
     for fn in os.listdir(dir):
       path = os.path.join(dir,fn)
-      with open(path) as f:
+      with open(path, 'r', encoding='utf-8') as f:
         if os.path.isfile(path) and (not files or fn in files):
           for i in self.parsed_logline_stream(f):
             i[fields.MATCH_DATA].update({fields.FILENAME:path})

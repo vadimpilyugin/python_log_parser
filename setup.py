@@ -1,11 +1,11 @@
 from setuptools import setup
 
 def readme():
-    with open('README.rst') as f:
+    with open('README.rst', 'r', encoding='utf-8') as f:
         return f.read()
 
 setup(name='log_parser',
-      version='2.0',
+      version='2.1',
       description='Log Parser is a program for analyzing log files',
       classifiers=[
         'Development Status :: 3 - Alpha',

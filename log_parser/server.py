@@ -30,7 +30,7 @@ ROOT = '/'
 def placeholder_ep():
   pass
 
-with open(abs_path(config['api_file'])) as f:
+with open(abs_path(config['api_file']), 'r', encoding='utf-8') as f:
   content = json.loads(f.read())
 
 for ep, value in content.items():

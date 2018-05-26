@@ -108,7 +108,7 @@ def server_ep(server):
 def parse_single_ep(server, filename):
   if filename in global_parse_stats:
     return global_parse_stats[filename]
-  with open(os.path.join(config['log_folder'], server, filename)) as f:
+  with open(os.path.join(config['log_folder'], server, filename), 'r', encoding='utf-8') as f:
     s = {
       'ok' : 0,
       'fail' : 0

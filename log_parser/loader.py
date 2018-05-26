@@ -12,7 +12,7 @@ from . import fields
 TEMPLATE_ID = 1
 
 def content(fn):
-  with open(abs_path(fn)) as f:
+  with open(abs_path(fn), 'r', encoding='utf-8') as f:
     return yaml.load(f)
 
 def normalize(s):
@@ -70,7 +70,7 @@ def load_all_services(dir):
   return srv.ServiceSet(services)
 
 def load_aggregations():
-  with open(abs_path(config["report_file"])) as f:
+  with open(abs_path(config["report_file"]), 'r', encoding='utf-8') as f:
     content = yaml.load(f)
   for server_name in content:
     for stat_type in content[server_name]:

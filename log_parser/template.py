@@ -19,7 +19,7 @@ class TemplateLoader:
 
   @staticmethod
   def load_file(fn):
-    with open(fn) as f:
+    with open(fn, 'r', encoding='utf-8') as f:
       return yaml.load(f)
 
   @staticmethod
