@@ -5,7 +5,7 @@ def readme():
         return f.read()
 
 setup(name='log_parser',
-      version='2.1',
+      version='2.3',
       description='Log Parser is a program for analyzing log files',
       classifiers=[
         'Development Status :: 3 - Alpha',
