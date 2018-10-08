@@ -1,8 +1,3 @@
-yaml_adapter.py
-web/src/components/Blocks.vue
-web/src/components/Periodicity.vue
-web/src/components/PopupMessage.vue
-web/src/components/TemplateEditor.vue
 input_data*
 list*
 logp/
@@ -11,8 +6,6 @@ main.py
 Untitled.ipynb
 Untitled1.ipynb
 __pycache__/
-module.py
-test_main.py
 .eggs/
 Pipfile.lock
 build/
@@ -21,3 +14,5 @@ dist/*.whl
 dist/*.tar.gz
 dist/build/*
 log_parser/web/dist/build.js.map
+*.pyc
+*web/dist*

@@ -7,7 +7,7 @@
     </a>
   </nav>
   <div class="central-col">
-    <h5 class="card-title report-descr"> Выбор файлов </h5>
+    <h5 class="card-title report-descr"> Выбор файлов</h5>
     <p class="card-text report-descr"> Выберите файлы для разбора. Текущая папка {{log_folder}} </p>
     <div>
       <button class="btn btn-primary report-descr" @click="parseFiles" v-if="!clicked"> Parse! </button>

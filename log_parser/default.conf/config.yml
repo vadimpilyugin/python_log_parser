@@ -1,5 +1,5 @@
 ---
-log_folder: '/var/log'
+log_folder: '/home/vadim/Documents/logs/new_logs'
 report_file: 'default.conf/report.yml'
 
 

@@ -38,5 +38,15 @@
     "handler" : "config",
     "methods" : ["GET"],
     "params" : []
+  },
+  "/analyze" : {
+    "handler" : "analyze",
+    "methods" : ["GET"],
+    "params" : ["server","filename"]
+  },
+  "/periodicity" : {
+    "handler" : "periodicity",
+    "methods" : ["GET"],
+    "params" : ["server","filename", "flds", "k"]
   }
 }

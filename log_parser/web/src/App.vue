@@ -1,6 +1,10 @@
 <template>
   <div class="full-frame">
     <div class="main-content">
+      <!-- <Periodicity
+        :errors="errors"
+
+      ></Periodicity> -->
       <FileSelect 
         @success="report = true" 
         v-if="!report"

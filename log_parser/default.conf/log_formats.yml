@@ -1,8 +1,10 @@
 ---
+
 ApacheFormat:
-  service: apache
-  date: '%d/%b/%Y:%H:%M:%S %z'
-  regex: |
+  __SERVICE__: apache
+  __DATE__: '%d/%b/%Y:%H:%M:%S %z'
+  __REGEX__: |
+    ^
     (?<user_ip>\S+) # may be ipv6
     \s-\s-\s
     \[
@@ -15,26 +17,30 @@ ApacheFormat:
       HTTP\/(?<http_version>\d\.\d)
     "
     \s
-    (?<code>\d+)
-    (.*)
+    (?<code>\d+)\s
+    (?<content_length>(\d+ | -))\s  # content-length
+    "(?<host>[^"]+)"\s        # may be just "-"
+    ".*"                      # user-agent
     \s-\s-\s
-    (?<__SERVER__>\S+)
+    (?<__SERVER__>\S+)?
     
 SyslogFormat:
-  date: '%b %d %H:%M:%S'
-  regex: |
-    (?<__DATE__>[a-zA-Z]+\s+\d+\s\d+:\d+:\d+)\s+       # Feb 25 00:12:18
+  __DATE__: '%b %d %H:%M:%S'
+  __REGEX__: |
+    ^
+    (?<__DATE__>[a-zA-Z]{3,4}\s+\d{1,2}\s\S+)\s+       # Feb 25 00:12:18
     (?<__SERVER__>\S+)\s+     # newserv
-    (?<__SERVICE__>[^\[:\ ]+) # systemd-logind - все до разделителя
-    (\[(?<pid>\d+)\])?        # [10405] - может идти, а может и не идти за именем сервиса
+    (?<__SERVICE__>[^\[:\s]+) # systemd-logind
+    (\[(?<pid>\d+)\])?        # [10405] - process pid
     (:)?\s*(?<__MSG__>.*)     # : Accepted publickey for autocheck
 
 Fail2BanFormat:
-  date: '%Y-%m-%d %H:%M:%S'
-  regex: |
-    (?<__DATE__>[^,]+),\d+   # 2017-02-05 07:06:03,142
+  __DATE__: '%Y-%m-%d %H:%M:%S'
+  __REGEX__: |
+    ^
+    (?<__DATE__>\S+\s[^,]+),\d+   # 2017-02-05 07:06:03,142
     \s+
-    # Service, type
+    # __SERVICE__, type
     (?<__SERVICE__>[^\.]+)
     \.
     (?<type>\S+)
@@ -45,7 +51,18 @@ Fail2BanFormat:
     # Warning level
     (?<level>\S+)        # INFO
     \s+
-    # Service name
+    # __SERVICE__ name
     (\[([\w\-]+)\])? # [pam-generic]
     \s+
     (?<__MSG__>.*)             # rollover performed on /var/log/fail2ban.log
+
+TeamViewerFormat:
+  __DATE__: '%Y/%m/%d %H:%M:%S'
+  __SERVICE__: teamviewer
+  __REGEX__: |
+    ^
+    (?<__DATE__>\S+\s[^\.]+)\.\d+\s # 2018/04/26 11:28:53.043
+    (?<pid>\d+)\s # 30120
+    \d+\s # 139642863393920  
+    \w[+]? # S+ 
+    (?<__MSG__>.*) # Up__DATE__OnlineState newOnlineValue 0

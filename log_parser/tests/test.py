@@ -1,38 +1,41 @@
-import unittest
 # import os,sys
 # sys.path.insert(1, os.path.join(sys.path[0], '..')) 
 from .. import log_formats as fmt
 from .. import fields
-import re
 from .. import excp
 from .. import service as srv
 from .. import loader as ld
 from .. import parser as p
 from .. import aggregation as agg
-from ..config import abs_path 
+import re
+import unittest
+import datetime
+
+from os import path
+THIS_FOLDER = path.dirname(__file__)
+
 
 class TestLogFormat(unittest.TestCase):
   def setUp(self):
-    self.re_str1 = r'(?P<foo>\S+) (?P<bar>\S+)'
-    self.re_str2 = r'foo\d+'
-    self.str1 = 'foobar foobaz'
-    self.str2 = 'foo123'
-    self.str3 = 'foobar   '
+    self.date_fmt = '%d/%b/%Y:%H:%M:%S'
+    self.re_str1 = rf'\[(?<__DATE__>\S+)\] (?<foo>\S+) (?<bar>\S+)'
+    self.re_str2 = rf'\[(?<__DATE__>\S+)\] foo\d+'
+    self.str1 = '[27/Feb/2018:10:49:48] foobar foobaz'
+    self.str2 = '[27/Feb/2018:10:50:48] foo123'
+    self.str3 = '[27/Feb/2018:11:49:04] foobar   '
     self.service1 = 'foo'
-    self.hsh1 = {
-      'foo':'foobar', 
-      'bar':'foobaz', 
-      fields.SERVICE:self.service1
-    }
     self.format_name1 = 'FooFormat'
-    self.regex1 = re.compile(self.re_str1)
-    self.regex2 = re.compile(self.re_str2)
+    self.regex1 = re.compile(ld.normalize(self.re_str1))
+    self.regex2 = re.compile(ld.normalize(self.re_str2))
+    assert self.regex1.match(self.str1)
+    assert self.regex2.match(self.str2)
     self.log_format1 = fmt.LogFormat(
       name=self.format_name1, 
       regex=self.regex1, 
-      service=self.service1
+      service=self.service1,
+      date=self.date_fmt
     )
-    log_formats = ld.load_log_formats(ld.content('tests/test_log_formats.yml'))
+    log_formats = ld.load_log_formats(ld.content(path.join(THIS_FOLDER, 'test_log_formats.yml')))
     self.apache_format = log_formats.log_formats[0]
     self.apache_s = '141.8.142.23 - - [09/Oct/2016:06:35:46 +0300] "GET /robots.txt HTTP/1.0" 404 289 "-" "Mozilla/5.0 (compatible; YandexBot/3.0; +http://yandex.com/bots)" - - old.parallel.ru'
 
@@ -40,23 +43,40 @@ class TestLogFormat(unittest.TestCase):
     fmt.LogFormat(
       name=self.format_name1, 
       regex=self.regex1, 
-      service=self.service1
+      service=self.service1,
+      date=self.date_fmt
     )
 
   def test_parse_log_format(self):
     hsh = self.log_format1.parse(self.str1)
-    self.assertEqual(hsh,self.hsh1)
+    self.assertEqual(hsh, {
+      'foo':'foobar', 
+      'bar':'foobaz', 
+      '__DATE__': datetime.datetime(2018, 2, 27, 10, 49, 48),
+      fields.SERVICE:self.service1
+    })
 
   def test_raise_on_service_missing(self):
-    with self.assertRaises(excp.LogFormatException, msg=fmt.NO_SERVICE):
+    with self.assertRaises(excp.LogFormatException, msg=excp.NO_SERVICE):
       f = fmt.LogFormat(
         name=self.format_name1, 
         regex=self.regex1, 
+        date=self.date_fmt
       )
 
   def test_regex_with_service(self):
-    f = fmt.LogFormat(name='foo',regex=re.compile(r'(?P<__SERVICE__>\S+) (?P<digits>\d\d)'))
-    self.assertEqual(f.parse('foobar 12'), {fields.SERVICE:'foobar', 'digits':'12'})
+    f = fmt.LogFormat(
+      name='foo',
+      regex=re.compile(r'(?P<__DATE__>\S+) (?P<__SERVICE__>\S+) (?P<digits>\d\d)'),
+      date=self.date_fmt
+    )
+    self.assertEqual(
+      f.parse('27/Feb/2018:10:50:04 foobar 12'), {
+        fields.SERVICE:'foobar', 
+        'digits':'12',
+        '__DATE__': datetime.datetime(2018, 2, 27, 10, 50, 4)
+      }
+    )
 
   def test_wrong_parse(self):
     self.assertIsNone(self.log_format1.parse(self.str3))
@@ -72,30 +92,34 @@ class TestLogFormat(unittest.TestCase):
 
 class TestLogFormatSet(unittest.TestCase):
   def setUp(self):
+    self.date_fmt = '%d/%b/%Y:%H:%M:%S'
     self.f1 = fmt.LogFormat(
       name='FooFormat1',
-      regex=re.compile(r'\d\d\d\d (?P<__SERVICE__>\w+) \d\d\.\d\d\d\d'),
+      regex=re.compile(r'(?P<__DATE__>\S+) \d\d\d\d (?P<__SERVICE__>\w+) \d\d\.\d\d\d\d'),
+      date=self.date_fmt
     )
     self.f2 = fmt.LogFormat(
       name='FooFormat2',
-      regex=re.compile(r'\d\d--\d\d (?P<__SERVICE__>\w+) \d\d-\d\d-\d\d\d\d'),
+      regex=re.compile(r'(?P<__DATE__>\S+) \d\d--\d\d (?P<__SERVICE__>\w+) \d\d-\d\d-\d\d\d\d'),
+      date=self.date_fmt
     )
     self.f3 = fmt.LogFormat(
       name='FooFormat3',
-      regex=re.compile(r'\d\d\s\d\d (?P<__SERVICE__>\w+) \d\d\s\d\d\s\d\d\d\d'),
+      regex=re.compile(r'(?P<__DATE__>\S+) \d\d\s\d\d (?P<__SERVICE__>\w+) \d\d\s\d\d\s\d\d\d\d'),
+      date=self.date_fmt
     )
     self.p = fmt.LogFormatSet([self.f1,self.f2,self.f3])
     self.lines1 = [
-      '1359 sshd 12.2014',
-      '4241 sshd 13.2014',
-      '5752 sshd 14.2014',
-      '9658 sshd 15.2014',
+      '27/Feb/2018:10:51:42 1359 sshd 12.2014',
+      '27/Feb/2018:10:51:42 4241 sshd 13.2014',
+      '27/Feb/2018:10:51:42 5752 sshd 14.2014',
+      '27/Feb/2018:10:51:42 9658 sshd 15.2014',
     ]
     self.lines2 = [
-      '13--59 sshd 12-01-2014',
-      '42--41 sshd 13-01-2014',
-      '57--52 sshd 14-01-2014',
-      '96--58 sshd 15-01-2014',
+      '27/Feb/2018:10:51:42 13--59 sshd 12-01-2014',
+      '27/Feb/2018:10:51:42 42--41 sshd 13-01-2014',
+      '27/Feb/2018:10:51:42 57--52 sshd 14-01-2014',
+      '27/Feb/2018:10:51:42 96--58 sshd 15-01-2014',
     ]
 
   def test_parsing(self):
@@ -103,9 +127,9 @@ class TestLogFormatSet(unittest.TestCase):
 
   def test_lines(self):
     for line in self.lines1:
-      self.assertEqual(self.f1.parse(line), {fields.SERVICE:'sshd'})
+      self.assertEqual(self.f1.parse(line), {fields.SERVICE:'sshd','__DATE__': datetime.datetime(2018, 2, 27, 10, 51, 42)})
     for line in self.lines2:
-      self.assertEqual(self.f2.parse(line), {fields.SERVICE:'sshd'})
+      self.assertEqual(self.f2.parse(line), {fields.SERVICE:'sshd','__DATE__': datetime.datetime(2018, 2, 27, 10, 51, 42)})
 
   def test_caching(self):
     self.p.parse(self.lines1[0])
@@ -123,24 +147,21 @@ class TestTemplate(unittest.TestCase):
     )
     self.category = 'New connection'
     self.level = 'Info'
-    self.template_id = 1
     self.template = srv.Template(
       regex_s=self.regex_s,
       category=self.category,
       level=self.level,
-      template_id=self.template_id
     )
     self.s = 'Connection from 1.1.1.1 port 1234'
 
   def test_parse(self):
-    self.assertEqual(self.template.parse(self.s), {
+    self.assertTrue(self.template.parse(self.s).items() >= {
       # fields.TEMPLATE_REGEX : self.regex_s,
       fields.LEVEL : self.level,
       fields.TEMPLATE_CATEGORY : self.category,
-      fields.TEMPLATE_ID : self.template_id,
       'user_ip' : '1.1.1.1',
       'user_port' : '1234'
-    })
+    }.items())
 
 class ServiceTemplates(unittest.TestCase):
   def setUp(self):
@@ -148,19 +169,16 @@ class ServiceTemplates(unittest.TestCase):
       regex_s=r'Connection from (?P<user_ip>\d+\.\d+\.\d+\.\d+) port (?P<user_port>\d+)',
       category='New connection',
       level='Info',
-      template_id=1
     )
     self.t2 = srv.Template(
       regex_s=r'Disconnected from (?P<user_ip>\d+\.\d+\.\d+\.\d+) port (?P<user_port>\d+)',
       category='Disconnect',
       level='Info',
-      template_id=2
     )
     self.t3 = srv.Template(
       regex_s=r'fatal: Read from socket failed: Connection reset by peer',
       category='Connection reset',
       level='Error',
-      template_id=3
     )
     self.templates = srv.ServiceTemplates([self.t1, self.t2, self.t3])
     self.line1 = 'Connection from 1.1.1.1 port 1234'
@@ -173,7 +191,7 @@ class ServiceTemplates(unittest.TestCase):
     self.assertEqual(self.templates.parse(self.line3),self.t3.parse(self.line3))
 
   def test_sort(self):
-    for i in range(0,srv.SORT_INTERVAL):
+    for i in range(0,srv.ServiceTemplates.SORT_INTERVAL):
       self.templates.parse(self.line3)
       self.templates.parse(self.line3)
       self.templates.parse(self.line2)
@@ -224,8 +242,8 @@ class TestServiceSet(unittest.TestCase):
 
 class TestParser(unittest.TestCase):
   def setUp(self):
-    self.log_format_set = ld.load_log_formats(ld.content('tests/test_log_formats.yml'))
-    self.service_set = ld.load_all_services(abs_path('tests/test_templates/'))
+    self.log_format_set = ld.load_log_formats(ld.content(path.join(THIS_FOLDER, 'test_log_formats.yml')))
+    self.service_set = ld.load_all_services(path.join(THIS_FOLDER, "test_templates")) # FIXME: abs_path
     self.p = p.Parser(self.log_format_set, self.service_set)
     self.loglines = [
       'May 18 11:16:29 93.180.9.161 motion: [1] [NTC] [EVT] event_new_video FPS 2',
@@ -245,8 +263,8 @@ class TestParser(unittest.TestCase):
       {fields.SERVICE: 'sshd', fields.MESSAGE: 'Dec 11 07:38:16 newserv sshd[14495]: Disconnected from user root 42.7.26.60'}
     ]
     self.msg_match_data = [
-      {fields.SERVICE: 'apache', 'user_ip': '141.8.142.23','method': 'GET', 'path': '/robots.txt','params': None, 'http_version': '1.0', 'code': '404','__LEVEL__': 'Info','__CATEGORY__': 'New connection','__TEMPLID__': 23},
-      {fields.SERVICE: 'sshd','__CATEGORY__': 'Disconnect','__LEVEL__': 'Info','__SERVICE__': 'sshd','__TEMPLID__': 28,'user_ip': '42.7.26.60','username': 'root'}
+      {fields.SERVICE: 'apache', 'user_ip': '141.8.142.23','method': 'GET', 'path': '/robots.txt','params': None, 'http_version': '1.0', 'code': '404','__LEVEL__': 'Info','__CATEGORY__': 'New connection'},
+      {fields.SERVICE: 'sshd','__CATEGORY__': 'Disconnect','__LEVEL__': 'Info','__SERVICE__': 'sshd','user_ip': '42.7.26.60','username': 'root'}
     ]
     self.errnos = [
       p.NO_FORMAT,
@@ -266,10 +284,7 @@ class TestParser(unittest.TestCase):
       errno, reason, match_data = self.p.parse_msg(line_hash)
       self.assertIsNone(reason)
       self.assertIsNotNone(match_data)
-      self.assertEqual(
-        match_data,
-        self.msg_match_data[i]
-      )
+      self.assertTrue(self.msg_match_data[i].items() <= match_data.items())
       self.assertEqual(errno, p.OK)
 
   def test_bad_parse(self):
@@ -302,7 +317,8 @@ class TestAggregation(unittest.TestCase):
     self.agg4 = agg.Aggregation({
         fields.NAME: "Aggregation 4",
         fields.KEYS: ["key1", "key2"],
-        fields.SORT_ORDER: 'asc'
+        fields.SORT_ORDER: agg.ASC,
+        fields.SORT_FIELD: fields.WEIGHT
       }
     )
     self.items = [
@@ -321,22 +337,29 @@ class TestAggregation(unittest.TestCase):
       self.agg4.insert(i)
 
   def test_aggregation(self):
+    self.maxDiff = None
     self.assertEqual(self.agg.get_distrib()[fields.WEIGHT], 5)
     self.assertEqual(
       self.agg.get_distrib(),
       {'__ARRAY__': [{'__ARRAY__': [{'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'bar',
                                      '__WEIGHT__': 2},
                                     {'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'baz',
                                      '__WEIGHT__': 1}],
+                      '__DISTINCT__': 2,
                       '__NAME__': '3',
                       '__WEIGHT__': 3},
                      {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'foo',
                                      '__WEIGHT__': 2}],
+                      '__DISTINCT__': 1,
                       '__NAME__': '2',
                       '__WEIGHT__': 2}],
+       '__DISTINCT__': 2,
        '__NAME__': 'Aggregation 1',
        '__WEIGHT__': 5}
     )
@@ -344,67 +367,73 @@ class TestAggregation(unittest.TestCase):
   def test_agg_sort_order(self):
     self.assertEqual(
       self.agg4.get_distrib(),
-      {'__ARRAY__': [
-                      {'__ARRAY__': [{'__ARRAY__': [],
+      {'__ARRAY__': [{'__ARRAY__': [{'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'foo',
                                      '__WEIGHT__': 2}],
+                      '__DISTINCT__': 1,
                       '__NAME__': '2',
                       '__WEIGHT__': 2},
-                      {'__ARRAY__': [{'__ARRAY__': [],
+                     {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'baz',
                                      '__WEIGHT__': 1},
-                                     {'__ARRAY__': [],
+                                    {'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'bar',
                                      '__WEIGHT__': 2}],
+                      '__DISTINCT__': 2,
                       '__NAME__': '3',
-                      '__WEIGHT__': 3},
-
-                     ],
+                      '__WEIGHT__': 3}],
+       '__DISTINCT__': 2,
        '__NAME__': 'Aggregation 4',
        '__WEIGHT__': 5}
     )
 
   def test_agg_save_lines(self):
     self.assertEqual(
-      self.agg2.distrib.distrib[fields.WEIGHT],
-      5
+      self.agg2.inner.root.weight,5
     )
+    # self.assertEqual(
+    #   self.agg2.inner.root.children['2'].saved_lines,
+    #   [
+    #     {"key1":"2", "key2":"foo"},
+    #     {"key1":"2", "key2":"foo", "key3":'baz'}
+    #   ]
+    # )
     self.assertEqual(
-      self.agg2.distrib.distrib['2'][fields.LINES],
+      self.agg2.inner.root['2']['foo'].saved_lines,
       [
         {"key1":"2", "key2":"foo"},
         {"key1":"2", "key2":"foo", "key3":'baz'}
       ]
     )
     self.assertEqual(
-      self.agg2.distrib.distrib['2']['foo'][fields.LINES],
-      [
-        {"key1":"2", "key2":"foo"},
-        {"key1":"2", "key2":"foo", "key3":'baz'}
-      ]
-    )
-    self.assertEqual(
-      self.agg2.distrib.distrib['3']['baz'][fields.LINES],
+      self.agg2.inner.root['3']['baz'].saved_lines,
       [
         {"key1":"3", "key2":"baz"},
       ]
     )
 
   def test_agg_exclude(self):
+    self.maxDiff = None
     self.assertEqual(
       self.agg3.get_distrib(),
-      {'__ARRAY__': [
-      {'__ARRAY__': [{'__ARRAY__': [],
+      {'__ARRAY__': [{'__ARRAY__': [{'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'foo',
                                      '__WEIGHT__': 2}],
+                      '__DISTINCT__': 1,
                       '__NAME__': '2',
                       '__WEIGHT__': 2},
-      {'__ARRAY__': [{'__ARRAY__': [],
+                     {'__ARRAY__': [{'__ARRAY__': [],
+                                     '__DISTINCT__': 0,
                                      '__NAME__': 'bar',
                                      '__WEIGHT__': 2}],
+                      '__DISTINCT__': 1,
                       '__NAME__': '3',
-                      '__WEIGHT__': 2},
-                     ],
+                      '__WEIGHT__': 2}],
+       '__DISTINCT__': 2,
        '__NAME__': 'Aggregation 3',
        '__WEIGHT__': 4}
     )

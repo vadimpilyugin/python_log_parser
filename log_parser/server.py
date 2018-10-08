@@ -30,7 +30,7 @@ ROOT = '/'
 def placeholder_ep():
   pass
 
-with open(abs_path(config['api_file']), 'r', encoding='utf-8') as f:
+with open(config['api_file'], 'r', encoding='utf-8') as f:
   content = json.loads(f.read())
 
 for ep, value in content.items():
@@ -63,10 +63,10 @@ def print_request(req):
 def before_ep():
   global STATIC_FILES
   if request.path in STATIC_FILES:
-    return flask.send_file(abs_path('web'+request.path))
+    return flask.send_file('web'+request.path)
   global ROOT
   if request.path == ROOT:
-    return flask.send_file(abs_path('web'+STATIC_FILES[0]))
+    return flask.send_file('web'+STATIC_FILES[0])
   global content
   print_request(request)
   if request.path not in content:
@@ -93,6 +93,8 @@ def before_ep():
     e = sys.exc_info()
     tr = traceback.TracebackException(*e)
     msg = list(tr.format())[-1].strip()
+    for i in tr.format():
+      print(i)
     return retcode(False, msg, EXCEPTION)
   if ret is None:
     return retcode(False, handler_name, RETURNED_NONE)
@@ -111,4 +113,4 @@ def apply_cors(response):
   return response
 
 def start(ip, port):
-  app.run(debug=False,threaded=False,processes=1,host=ip,port=port)
+  app.run(debug=True,threaded=False,processes=1,host=ip,port=port)

@@ -1,18 +1,16 @@
-import yaml
 from . import log_formats as fmt
 from . import service as srv
-import os
-import re
 from . import excp
 from . import aggregation as agg
-from .config import config
-from .config import abs_path
 from . import fields
+from .config import config
 
-TEMPLATE_ID = 1
+import yaml
+import os
+import re
 
 def content(fn):
-  with open(abs_path(fn), 'r', encoding='utf-8') as f:
+  with open(fn, 'r', encoding='utf-8') as f:
     return yaml.load(f)
 
 def normalize(s):
@@ -20,13 +18,13 @@ def normalize(s):
 
 def load_log_formats(content):
   log_formats = []
-  for fmt_name in content:
+  for fmt_name, params in content.items():
     log_formats.append(
       fmt.LogFormat(
         name=fmt_name,
-        regex=re.compile(normalize(content[fmt_name]['regex']), re.X),
-        service=content[fmt_name]['service'] if 'service' in content[fmt_name] else None,
-        date=content[fmt_name]['date'] if 'date' in content[fmt_name] else None 
+        service=params[fields.SERVICE] if fields.SERVICE in params else None,
+        date=params[fields.DATE],
+        regex=re.compile(normalize(params[fields.REGEX]), re.X)
       )
     )
   return fmt.LogFormatSet(log_formats)
@@ -38,10 +36,11 @@ def template_iterator(content):
         yield(level, category, template)
 
 def load_service(content):
-  global TEMPLATE_ID
+  assert 'service' in content, excp.NO_SERVICE_NAME
+  assert 'regex' in content, excp.NO_REGEX
+  assert 'templates' in content, excp.NO_TEMPLATES
+
   service_templates = []
-  if 'templates' not in content:
-    raise excp.LoaderException(content)
   if content['templates'] is None:
     content['templates'] = []
   categories = {}
@@ -51,10 +50,8 @@ def load_service(content):
         regex_s=normalize(template),
         category=category,
         level=level,
-        template_id=TEMPLATE_ID
       )
     )
-    TEMPLATE_ID += 1
     categories[category] = True
   return srv.Service(
     regex=re.compile(normalize(content['regex'])),
@@ -70,14 +67,14 @@ def load_all_services(dir):
   return srv.ServiceSet(services)
 
 def load_aggregations():
-  with open(abs_path(config["report_file"]), 'r', encoding='utf-8') as f:
-    content = yaml.load(f)
-  for server_name in content:
-    for stat_type in content[server_name]:
-      ar = content[server_name][stat_type]
-      for i in range(0, len(ar)):
+  report_content = content(config["report_file"])
+  rprt = agg.Report()
+  for server, stat_types in report_content.items():
+    for stat_type, stats in stat_types.items():
+      for stat in stats:
         if stat_type == fields.COUNTERS:
-          ar[i] = agg.Counter(ar[i])
-        elif stat_type == fields.DISTRIBUTIONS:
-          ar[i] = agg.Aggregation(ar[i])
-  return content
+          stat = agg.Counter(stat)
+        else:
+          stat = agg.Aggregation(stat)
+        rprt.add_stat(server, stat_type, stat)
+  return rprt

@@ -27,7 +27,7 @@
           >
             <span class="list-item-text">{{item['__NAME__']}}</span>
             <!-- <a href="#" v-if="is_link(i)" @click.prevent="triggerEditor(i)"> Добавить </a> -->
-            <span class="badge badge-secondary">{{item['__WEIGHT__']}}</span>
+            <span class="badge badge-secondary">{{item[sort_field]}}</span>
           </li>
         </ul>
       </div>
@@ -37,7 +37,7 @@
 <script>
   import { apiRequest, makeId } from './request_lib.js';
   export default {
-    props: ['endpoint', 'server', 'no', 'danger', 'errors'],
+    props: ['params', 'danger', 'errors'], // 'endpoint', 'server', 'no',
     data () {
       return {
         name: 'Stat\'s name',
@@ -49,7 +49,8 @@
         visible: false,
         no_format: "Не нашлось формата",
         no_service: "Какие сервисы не определены",
-        no_template: "Для каких строк не нашлось шаблона"
+        no_template: "Для каких строк не нашлось шаблона",
+        sort_field: ''
       }
     },
     computed: {
@@ -104,6 +105,18 @@
           this.index_seq.push(i);
         }
       },
+      getDistrib () {
+        apiRequest(this.params, (data) => {
+          this.name = data['__NAME__'];
+          if (data['__SORT_FIELD__'] === 'total')
+            this.sort_field = '__WEIGHT__';
+          else
+            this.sort_field = '__DISTINCT__';
+          this.weight = data['__WEIGHT__'];
+          this.elements = data['__ARRAY__'];
+          this.visible = this.weight > 0;
+        }, this.errors);
+      }
       // is_link (i) {
       //   if (this.danger && !this.is_clickable(i) && this.page_names[1] != this.no_format)
       //     return true;
@@ -117,31 +130,15 @@
       //     this.$emit('addTemplate', this.page_names[2], this.current_list[i].__NAME__)
       // }
     },
-    created () {
-      console.log("Created Aggregation with parameters: ",this.endpoint);
-      let params = {
-        method: 'get',
-        url: this.endpoint
-      };
-      if (this.danger) {
-
+    watch : {
+      params (new_params, old_params) {
+        console.log("Updated Aggregation with parameters: ", new_params);
+        this.getDistrib();
       }
-      else if (this.no === undefined)
-        params.params = {
-          server:this.server,
-        }
-      else
-        params.params = {
-          server:this.server,
-          no:this.no
-        }
-      apiRequest(params, (data) => {
-        this.name = data['__NAME__'];
-        this.weight = data['__WEIGHT__'];
-        this.elements = data['__ARRAY__'];
-        this.visible = this.weight > 0;
-      }, this.errors);
-
+    },
+    created () {
+      console.log("Created Aggregation with parameters: ",this.params);
+      this.getDistrib();
       this.id = makeId();
     }
   }

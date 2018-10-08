@@ -4,18 +4,18 @@ from . import service as srv
 from . import loader as ld
 from . import aggregation as agg
 from . import fields
+from . import periodicity as prd
 from .config import config
-import os
-import pprint
-import re
 
-pp = pprint.PrettyPrinter(indent=2)
+import os
+import re
+from collections import Counter
 
 log_format_set = ld.load_log_formats(ld.content(config['log_formats']))
 service_set = ld.load_all_services(config['templates'])
 p = prs.Parser(log_format_set, service_set)
 
-aggs = ld.load_aggregations()
+aggs = ld.load_aggregations() # FIXME: Report class!
 err_services = agg.Aggregation({
   fields.NAME : "Какие сервисы не определены",
   fields.KEYS : [fields.SERVICE],
@@ -163,3 +163,65 @@ def logs_filenames_ep(server, filter_out=r'.*\.gz|.*\.tgz|.*\.zip'):
 
 def config_ep():
   return config
+
+def single_field_single_ar(ar, field):
+  c = Counter()
+  for i in ar:
+    if field in i:
+      c.update(i[field])
+  keys_to_remove = []
+  for k,v in c.items():
+    if v <= 2:
+      keys_to_remove.append(k)
+  for k in keys_to_remove:
+    c.pop(k)
+  if len(c) == 0:
+    return None
+  # elif len(c) == 1 and 
+  # else:
+  #   return dict(c.items())
+
+def analyze_ep(server, filename):
+  s = {
+    'ok' : 0,
+    'fail' : 0,
+    'fields': {}
+  }
+  with open(os.path.join(config['log_folder'], server, filename), 'r', encoding='utf-8') as f:
+    for i in p.parsed_logline_stream(f):
+      if i[fields.ERRNO] != prs.OK:
+        s['fail'] += 1
+      else:
+        s['ok'] += 1
+        for k,v in i[fields.MATCH_DATA].items():
+          if v is not None:
+            if not k in s['fields']:
+              s['fields'][k] = True
+    ar = []
+    for k in s['fields']:
+      ar.append({
+        'field': k,
+        'checked': False
+      })
+    s['fields'] = ar
+  return s
+  # return {'server':server, 'filename':filename}
+
+def periodicity_ep(server, filename, flds, k):
+  flds = flds.split(',')
+  k = int(k)
+  period_stat = prd.Periodicity(flds, k)
+  with open(os.path.join(config['log_folder'], server, filename), 'r', encoding='utf-8') as f:
+    for i in p.parsed_logline_stream(f):
+      if i[fields.ERRNO] == prs.OK:
+        match_data = i[fields.MATCH_DATA]
+        match_data = {k:match_data[k] for k in match_data if match_data[k] is not None}
+        period_stat.insert(match_data)
+  return sorted(list(period_stat.calculate()), key=lambda elem: elem[fields.VARIATION])[:100]
+
+  # return {
+  #   fields.SERVER: server,
+  #   fields.FILENAME: filename,
+  #   fields.FIELDS: flds.split(","),
+  #   fields.DEPTH: k 
+  # }

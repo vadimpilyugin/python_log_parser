@@ -38,8 +38,7 @@
       <div class="distributions" v-for="(server_el, i) in layout">
         <aggregation 
           :errors="errors"
-          :endpoint='distribs_ep'
-          :server="server_el.__NAME__"
+          :params="{url: distribs_ep, method: 'get', params:{server: server_el.__NAME__}}"
           :danger="false"
           v-show="i == current_server"
         ></aggregation>
@@ -47,7 +46,7 @@
       <div class="failed-stats" v-show="layout[current_server].__NAME__ == ALL_SERVERS">
         <aggregation
           :errors="errors"
-          :endpoint="failed_ep"
+          :params="{url: failed_ep, method: 'get'}"
           :danger="true"
 
         ></aggregation>

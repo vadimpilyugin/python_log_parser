@@ -1,17 +1,14 @@
 ---
+
 ApacheFormat:
-  service: apache
-  regex: |
+  __SERVICE__: apache
+  __DATE__: '%d/%b/%Y:%H:%M:%S %z'
+  __REGEX__: |
+    ^
     (?<user_ip>\S+) # may be ipv6
     \s-\s-\s
     \[
-      (?<__DAY__>\d+) \/ 
-      (?<__MONTH__>[a-zA-Z]+) \/ 
-      (?<__YEAR__>\d+) : 
-      (?<__HOUR__>\d+) : 
-      (?<__MINUTE__>\d+) : 
-      (?<__SECOND__>\d+) \s 
-      (?<__TIMEZONE__>\+\d+)
+      (?<__DATE__>[^\]]+)
     \]
     \s
     "
@@ -20,19 +17,19 @@ ApacheFormat:
       HTTP\/(?<http_version>\d\.\d)
     "
     \s
-    (?<code>\d+)
-    (.*)
+    (?<code>\d+)\s
+    (?<content_length>(\d+ | -))\s  # content-length
+    "(?<host>[^"]+)"\s        # may be just "-"
+    ".*"                      # user-agent
     \s-\s-\s
-    (?<__SERVER__>\S+)
-
+    (?<__SERVER__>\S+)?
+    
 SyslogFormat:
-  regex: |
-    (?<__MONTH__>\S+)\s+      # Oct
-    (?<__DAY__>\d+)\s+        # 9
-    (?<__HOUR__>\d+):         # 06:
-    (?<__MINUTE__>\d+):       # 08:
-    (?<__SECOND__>\d+)\s+     # 05
+  __DATE__: '%b %d %H:%M:%S'
+  __REGEX__: |
+    ^
+    (?<__DATE__>[a-zA-Z]{3,4}\s+\d{1,2}\s\S+)\s+       # Feb 25 00:12:18
     (?<__SERVER__>\S+)\s+     # newserv
-    (?<__SERVICE__>[^\[:\ ]+) # systemd-logind - все до разделителя
-    (\[(?<pid>\d+)\])?        # [10405] - может идти, а может и не идти за именем сервиса
+    (?<__SERVICE__>[^\[:\s]+) # systemd-logind
+    (\[(?<pid>\d+)\])?        # [10405] - process pid
     (:)?\s*(?<__MSG__>.*)     # : Accepted publickey for autocheck

@@ -1,6 +1,6 @@
 ---
 regex: sshd
-service: sshd
+service: sshd  # Not redundant because ordering
 templates:
   Info:
     Disconnect:

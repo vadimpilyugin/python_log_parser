@@ -2,12 +2,7 @@ from . import log_formats as fmt
 from . import service as srv
 from . import loader as ld
 from . import fields
-import pprint
 import os
-# from datetime import datetime
-# import calendar
-
-pp = pprint.PrettyPrinter(indent=2)
 
 OK = 0
 NO_FORMAT = 1
@@ -23,44 +18,12 @@ STRERROR = {
   FIELDS_CONFLICT : 'Fields values are conflicting',
 }
 
-# class Date:
-#   month_dict = {v: k for k,v in enumerate(calendar.month_abbr)}
-#   now = datetime.now()
-#   now_hsh = {
-#     fields.YEAR: now.year,
-#     fields.MONTH: now.month,
-#     fields.DAY: now.day,
-#     fields.HOUR: now.hour,
-#     fields.MINUTE: now.minute,
-#     fields.SECOND: now.second,
-#   }
-
-#   @staticmethod
-#   def extract_date(hsh):
-#     # Translate string to int
-#     if fields.MONTH in hsh and hsh[fields.MONTH] in Date.month_dict:
-#       hsh[fields.MONTH] = Date.month_dict[hsh[fields.MONTH]]
-#     new_date = {}
-#     for k,v in Date.now_hsh.items():
-#       if k in hsh:
-#         new_date[k] = int(hsh[k])
-#       else:
-#         new_date[k] = Date.now_hsh[k]
-#     return datetime(
-#       new_date[fields.YEAR],
-#       new_date[fields.MONTH],
-#       new_date[fields.DAY],
-#       new_date[fields.HOUR],
-#       new_date[fields.MINUTE],
-#       new_date[fields.SECOND],
-#     )
-
 class Parser:
   def __init__(self, log_format_set, service_set, save_line=False,extract_date=False):
     self.log_format_set = log_format_set
     self.service_set = service_set
     self.save_line = save_line
-    # self.extract_date = extract_date
+    self.extract_date = extract_date
 
   def retcode(self, errno, reason=None, match_data={}):
     hsh = {
@@ -78,9 +41,7 @@ class Parser:
     if not fields.MESSAGE in line_hash:
       line_hash[fields.MESSAGE] = logline
     return self.parse_msg(line_hash)
-    # if self.extract_date:
-    #   hsh[fields.DATE] = Date.extract_date(hsh)
-
+    
   def parse_msg(self, line_hash):
     service = self.service_set.find_service(line_hash[fields.SERVICE])
     if service is None:
@@ -89,9 +50,6 @@ class Parser:
     if linedata is None:
       return NO_TEMPLATE, line_hash[fields.MESSAGE], line_hash
     line_hash.pop(fields.MESSAGE)
-    for k,v in linedata.items():
-      if k in line_hash and line_hash[k] != linedata[k]:
-        return FIELDS_CONFLICT, (k, line_hash[k], linedata[k]), line_hash
     line_hash.update(linedata)
     return OK, None, line_hash
 

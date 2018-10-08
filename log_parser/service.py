@@ -1,22 +1,23 @@
 from . import fields
 import re
 
-SORT_INTERVAL = 5000
-
 class Template:
   template_map = {}
-  def __init__(self, regex_s, category, level, template_id):
+  template_id = 0
+
+  def __init__(self, regex_s, category, level):
     self.regex_s = regex_s
     self.regex = re.compile(regex_s)
     self.category = category
     self.level = level
-    self.id = template_id
+    self.id = Template.template_id
+    Template.template_id += 1
     self.count = 0
     self.hsh = {
       # fields.TEMPLATE_REGEX : regex_s,
       fields.LEVEL : level,
       fields.TEMPLATE_CATEGORY : category,
-      fields.TEMPLATE_ID : template_id
+      fields.TEMPLATE_ID : self.id
     }
     Template.template_map[self.id] = self
   @classmethod
@@ -33,6 +34,8 @@ class Template:
     return None
 
 class ServiceTemplates:
+  SORT_INTERVAL = 5000
+
   def __init__(self, templates=[]):
     self.templates = templates
     self.count = 0
@@ -42,7 +45,7 @@ class ServiceTemplates:
 
   def parse(self, msg):
     md = None
-    if self.count > SORT_INTERVAL:
+    if self.count > ServiceTemplates.SORT_INTERVAL:
       self.__sort()
       self.count = 0
     for template in self.templates:
@@ -51,6 +54,9 @@ class ServiceTemplates:
         self.count += 1
         break
     return md
+
+  def size(self):
+    return len(self.templates)
 
 class Service:
   def __init__(self, regex, name, categories={}, service_templates=ServiceTemplates()):
@@ -73,7 +79,7 @@ class Service:
     return list(self.categories.keys()).sort()
 
   def __repr__(self):
-    return self.name
+    return f"{self.name} ({self.regex}): {self.service_templates.size()} templates"
 
 class ServiceSet:
   def __init__(self, services):

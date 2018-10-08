@@ -10,8 +10,9 @@ __ALL_SERVERS__:
   - __NAME__: "Открыто сессий autocheck"
     __SERVICE__: "sshd"
     __CATEGORY__: "Session activity"
-    "action": "opened"
-    "username": "autocheck"
+    __EQ__:
+      "action": "opened"
+      "username": "autocheck"
   - __NAME__: "Ошибок аутентификации при подключении по ssh"
     __SERVICE__: "sshd"
     __CATEGORY__: "Auth fail"
@@ -30,20 +31,20 @@ __ALL_SERVERS__:
     __TOP__: 15
   - __NAME__: "Какие сервера встретились в логах"
     __KEYS__:
-    - __SERVER__
-    - __SERVICE__
+    - "__SERVER__"
+    - "__SERVICE__"
     __TOP__: 50
 "asi":
   __DISTRIBUTIONS__:
   - __NAME__: "Какие события были зарегестрированы на сервере"
     __KEYS__:
-    - __SERVICE__
-    - __CATEGORY__
+    - "__SERVICE__"
+    - "__CATEGORY__"
     __TOP__: 50
 "vvv":
   __DISTRIBUTIONS__:
   - __NAME__: "Какие события были зарегестрированы на сервере"
     __KEYS__:
-    - __SERVICE__
-    - __CATEGORY__
+    - "__SERVICE__"
+    - "__CATEGORY__"
     __TOP__: 50
